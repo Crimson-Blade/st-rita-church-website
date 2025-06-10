@@ -46,10 +46,28 @@ const Contact: React.FC = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
-        <div className="container mx-auto px-4">
+      <section 
+        className="relative bg-gradient-to-r from-blue-900/80 to-blue-700/80 text-white py-16"
+        style={{
+          backgroundImage: 'url("/inside.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center">
-            <h1 className="text-4xl lg:text-5xl font-bold mb-6">Contact Us</h1>
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-white p-1 mr-4">
+                <img 
+                  src="/rita.png"
+                  alt="St. Rita's Parish Logo" 
+                  className="w-full h-full object-cover rounded-full"
+                />
+              </div>
+              <h1 className="text-4xl lg:text-5xl font-bold">Contact Us</h1>
+            </div>
             <p className="text-xl text-blue-100 max-w-3xl mx-auto">
               We'd love to hear from you. Get in touch with our parish office or visit us in person.
             </p>

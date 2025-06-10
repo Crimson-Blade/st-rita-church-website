@@ -115,7 +115,18 @@ const Footer: React.FC = () => {
         <div className="border-t border-blue-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-sm text-blue-200 mb-4 md:mb-0">
-              © {new Date().getFullYear()} St. Rita's Parish. All rights reserved.
+              <div>© {new Date().getFullYear()} St. Rita's Parish. All rights reserved.</div>
+              <div className="text-xs text-blue-300 mt-1">
+                Made with ❤️ by{' '}
+                <a
+                  href="https://in.linkedin.com/in/lance-barreto"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-200 hover:text-white transition-colors underline"
+                >
+                  Lance Barreto
+                </a>
+              </div>
             </div>
             <div className="flex space-x-4">
               <a
@@ -141,7 +152,7 @@ const Footer: React.FC = () => {
               </a>
             </div>
           </div>
-        </div>
+          </div>
       </div>
     </footer>
   );

@@ -90,8 +90,17 @@ const FeaturedBlogs: React.FC = () => {
   }
 
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-4">
+    <section 
+      className="relative py-16 bg-white"
+      style={{
+        backgroundImage: 'url("/inside.jpg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      <div className="absolute inset-0 bg-white/85"></div>
+      <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
             <BookOpen className="h-8 w-8 text-blue-600 mr-3" />

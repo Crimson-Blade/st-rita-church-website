@@ -87,9 +87,18 @@ const FeaturedAnnouncements: React.FC = () => {
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Parish Announcements
-          </h2>
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-100 p-1 mr-3">
+              <img 
+                src="/rita.png"
+                alt="St. Rita's Parish Logo" 
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900">
+              Parish Announcements
+            </h2>
+          </div>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Stay updated with the latest news and important information from our parish community.
           </p>

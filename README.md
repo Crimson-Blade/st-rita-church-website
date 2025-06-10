@@ -24,6 +24,15 @@ A modern, responsive website for Catholic parishes built with React, TypeScript,
 - **Contact Form Management**: Receive and manage contact submissions
 - **Responsive Design**: Works perfectly on all devices
 
+## Visual Design
+
+The website features beautiful background images of the church:
+
+- **outside.jpg**: Used as hero background on About page and homepage to showcase the church building
+- **inside.jpg**: Used as background on Contact page, Blog pages, and featured blog sections to create a welcoming, contemplative atmosphere
+- **Parallax Effect**: Background images use fixed attachment for an engaging scroll experience
+- **Overlay System**: Semi-transparent overlays ensure text readability while preserving image beauty
+
 ## Blog System
 
 The blog system is designed specifically for parish clergy to easily share spiritual content:

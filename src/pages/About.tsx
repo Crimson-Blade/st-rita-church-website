@@ -5,8 +5,17 @@ const About: React.FC = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
-        <div className="container mx-auto px-4">
+      <section 
+        className="relative bg-gradient-to-r from-blue-900/80 to-blue-700/80 text-white py-16"
+        style={{
+          backgroundImage: 'url("/outside.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center">
             <h1 className="text-4xl lg:text-5xl font-bold mb-6">About St. Rita's Parish</h1>
             <p className="text-xl text-blue-100 max-w-3xl mx-auto">

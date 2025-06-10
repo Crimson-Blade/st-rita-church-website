@@ -122,8 +122,17 @@ const Blog: React.FC = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
-        <div className="container mx-auto px-4">
+      <section 
+        className="relative bg-gradient-to-r from-blue-900/80 to-blue-700/80 text-white py-16"
+        style={{
+          backgroundImage: 'url("/inside.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center">
             <div className="flex items-center justify-center mb-6">
               <BookOpen className="h-12 w-12 text-yellow-300 mr-4" />

@@ -127,9 +127,19 @@ const BlogPostPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div 
+      className="min-h-screen bg-gray-50"
+      style={{
+        backgroundImage: 'url("/inside.jpg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      <div className="absolute inset-0 bg-white/90"></div>
+      
       {/* Navigation */}
-      <div className="bg-white shadow-sm">
+      <div className="bg-white/95 backdrop-blur-sm shadow-sm relative z-10">
         <div className="container mx-auto px-4 py-4">
           <Link
             to="/blog"
@@ -142,7 +152,7 @@ const BlogPostPage: React.FC = () => {
       </div>
 
       {/* Article */}
-      <article className="container mx-auto px-4 py-12">
+      <article className="container mx-auto px-4 py-12 relative z-10">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <header className="mb-8">

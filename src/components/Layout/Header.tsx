@@ -1,26 +1,41 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Cross, MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { Menu, X, MapPin, Phone, Mail, Clock, ChevronDown } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
 
   const navItems = [
     { path: '/', label: 'Home' },
     { path: '/about', label: 'About' },
-    { path: '/mass-times', label: 'Mass Times' },
-    { path: '/ministries', label: 'Ministries' },
-    { path: '/faith-formation', label: 'Faith Formation' },
-    { path: '/events', label: 'Events' },
-    { path: '/blog', label: 'Blog' },
-    { path: '/notice-board', label: 'Notice Board' },
-    { path: '/vocations', label: 'Vocations' },
+    {
+      label: 'Parish Life',
+      dropdown: [
+        { path: '/mass-times', label: 'Mass Times' },
+        { path: '/ministries', label: 'Ministries' },
+        { path: '/faith-formation', label: 'Faith Formation' },
+        { path: '/vocations', label: 'Vocations' },
+      ]
+    },
+    {
+      label: 'News & Events',
+      dropdown: [
+        { path: '/events', label: 'Events' },
+        { path: '/blog', label: 'Blog' },
+        { path: '/notice-board', label: 'Notice Board' },
+      ]
+    },
     { path: '/donate', label: 'Donate' },
     { path: '/contact', label: 'Contact' },
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleDropdownToggle = (label: string) => {
+    setActiveDropdown(activeDropdown === label ? null : label);
+  };
 
   return (
     <header className="bg-white shadow-lg">
@@ -53,29 +68,69 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <div className="bg-gradient-to-br from-blue-900 to-blue-700 p-3 rounded-full">
-              <Cross className="h-8 w-8 text-white" />
+            <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-blue-900 to-blue-700 p-1">
+              <img 
+                src="/rita.png"
+                alt="St. Rita's Parish Logo" 
+                className="w-full h-full object-cover rounded-full"
+              />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-blue-900">St. Rita's Parish</h1>
+              <h1 className="text-2xl font-bold text-blue-900">St. Rita's Church</h1>
               <p className="text-sm text-gray-600">Catholic Church</p>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex space-x-8">
+          <nav className="hidden lg:flex space-x-4">
             {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:text-blue-600 ${
-                  isActive(item.path)
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                {item.label}
-              </Link>
+              <div key={item.label || item.path} className="relative">
+                {item.dropdown ? (
+                  <div
+                    className="group"
+                    onMouseEnter={() => setActiveDropdown(item.label)}
+                    onMouseLeave={() => setActiveDropdown(null)}
+                  >
+                    <button 
+                      onClick={() => handleDropdownToggle(item.label)}
+                      className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      {item.label}
+                      <ChevronDown className="ml-1 h-4 w-4" />
+                    </button>
+                    {activeDropdown === item.label && (
+                      <div className="absolute top-full left-0 w-48 bg-white rounded-md shadow-lg border z-50">
+                        <div className="py-1">
+                          {item.dropdown.map((subItem) => (
+                            <Link
+                              key={subItem.path}
+                              to={subItem.path}
+                              className={`block px-4 py-2 text-sm transition-colors duration-200 ${
+                                isActive(subItem.path)
+                                  ? 'text-blue-600 bg-blue-50'
+                                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                              }`}
+                            >
+                              {subItem.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    to={item.path}
+                    className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:text-blue-600 ${
+                      isActive(item.path)
+                        ? 'text-blue-600 bg-blue-50'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                )}
+              </div>
             ))}
           </nav>
 
@@ -93,18 +148,51 @@ const Header: React.FC = () => {
           <nav className="lg:hidden mt-4 py-4 border-t">
             <div className="space-y-2">
               {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
-                    isActive(item.path)
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-                  }`}
-                >
-                  {item.label}
-                </Link>
+                <div key={item.label || item.path}>
+                  {item.dropdown ? (
+                    <div>
+                      <button
+                        onClick={() => handleDropdownToggle(item.label)}
+                        className="flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors duration-200"
+                      >
+                        {item.label}
+                        <ChevronDown className={`h-4 w-4 transition-transform ${
+                          activeDropdown === item.label ? 'rotate-180' : ''
+                        }`} />
+                      </button>
+                      {activeDropdown === item.label && (
+                        <div className="ml-4 mt-2 space-y-1">
+                          {item.dropdown.map((subItem) => (
+                            <Link
+                              key={subItem.path}
+                              to={subItem.path}
+                              onClick={() => setIsMenuOpen(false)}
+                              className={`block px-3 py-2 rounded-md text-sm transition-colors duration-200 ${
+                                isActive(subItem.path)
+                                  ? 'text-blue-600 bg-blue-50'
+                                  : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
+                              }`}
+                            >
+                              {subItem.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      to={item.path}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                        isActive(item.path)
+                          ? 'text-blue-600 bg-blue-50'
+                          : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  )}
+                </div>
               ))}
             </div>
           </nav>
