@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Calendar, User, ArrowLeft, Share2, BookOpen, Image as ImageIcon } from 'lucide-react';
+import { Calendar, User, ArrowLeft, Share2, BookOpen, ImageIcon } from '../components/Icons';
 import { strapiApi } from '../services/api';
 import type { BlogPost } from '../types';
 

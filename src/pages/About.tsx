@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cross, Heart, Users, BookOpen } from 'lucide-react';
+import { Cross, Heart, Users, BookOpen } from '../components/Icons';
 
 const About: React.FC = () => {
   return (

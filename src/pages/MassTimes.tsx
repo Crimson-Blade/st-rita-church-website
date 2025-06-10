@@ -9,7 +9,7 @@ import {
   Info,
   Phone,
   Mail
-} from 'lucide-react';
+} from '../components/Icons';
 import { strapiApi } from '../services/api';
 import type { MassTime, AdorationTime, ConfessionTime } from '../types';
 

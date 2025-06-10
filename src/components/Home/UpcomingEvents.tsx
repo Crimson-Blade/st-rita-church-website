@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, MapPin, Users, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, ArrowRight } from '../Icons';
 import { strapiApi } from '../../services/api';
 import type { Event } from '../../types';
 

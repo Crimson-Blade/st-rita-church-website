@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Cross, MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube } from '../Icons';
 
 const Footer: React.FC = () => {
   return (
@@ -10,9 +10,13 @@ const Footer: React.FC = () => {
           {/* Parish Info */}
           <div>
             <div className="flex items-center space-x-3 mb-4">
-              <div className="bg-gradient-to-br from-blue-700 to-blue-600 p-2 rounded-full">
-                <Cross className="h-6 w-6 text-white" />
-              </div>
+            <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-blue-900 to-blue-700 p-1">
+              <img 
+                src="/rita.png"
+                alt="St. Rita's Parish Logo" 
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
               <div>
                 <h3 className="text-xl font-bold">St. Rita's Parish</h3>
                 <p className="text-sm text-blue-200">Catholic Church</p>
