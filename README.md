@@ -1,4 +1,4 @@
-# St. Mary's Parish Website
+# St. Rita's Parish Website
 
 A modern, responsive website for Catholic parishes built with React, TypeScript, and Tailwind CSS, integrated with Strapi CMS for easy content management.
 

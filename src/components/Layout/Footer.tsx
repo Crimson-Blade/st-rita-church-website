@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
                 <Cross className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold">St. Mary's Parish</h3>
+                <h3 className="text-xl font-bold">St. Rita's Parish</h3>
                 <p className="text-sm text-blue-200">Catholic Church</p>
               </div>
             </div>
@@ -32,16 +32,16 @@ const Footer: React.FC = () => {
                 <MapPin className="h-4 w-4 mr-2 text-blue-300" />
                 <span className="text-sm text-blue-200">
                   123 Church Street<br />
-                  Anytown, ST 12345
+                  Maina, ST 12345
                 </span>
               </div>
               <div className="flex items-center">
                 <Phone className="h-4 w-4 mr-2 text-blue-300" />
-                <span className="text-sm text-blue-200">(555) 123-4567</span>
+                <span className="text-sm text-blue-200">+91 8788653451</span>
               </div>
               <div className="flex items-center">
                 <Mail className="h-4 w-4 mr-2 text-blue-300" />
-                <span className="text-sm text-blue-200">office@stmaryparish.org</span>
+                <span className="text-sm text-blue-200">office@stritaparish.org</span>
               </div>
             </div>
           </div>
@@ -115,7 +115,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-blue-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-sm text-blue-200 mb-4 md:mb-0">
-              © {new Date().getFullYear()} St. Mary's Parish. All rights reserved.
+              © {new Date().getFullYear()} St. Rita's Parish. All rights reserved.
             </div>
             <div className="flex space-x-4">
               <a

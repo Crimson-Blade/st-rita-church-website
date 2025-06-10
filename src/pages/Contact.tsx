@@ -193,7 +193,7 @@ const Contact: React.FC = () => {
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Visit Us</h3>
                     <p className="text-gray-600">
                       123 Church Street<br />
-                      Anytown, ST 12345<br />
+                      Maina, ST 12345<br />
                       United States
                     </p>
                   </div>
@@ -206,8 +206,8 @@ const Contact: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Call Us</h3>
                     <p className="text-gray-600">
-                      Parish Office: (555) 123-4567<br />
-                      Emergency: (555) 123-4568
+                      Parish Office: +91 8788653451<br />
+                      Emergency: +91 8788653451
                     </p>
                   </div>
                 </div>
@@ -219,8 +219,8 @@ const Contact: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Email Us</h3>
                     <p className="text-gray-600">
-                      General: office@stmaryparish.org<br />
-                      Pastor: pastor@stmaryparish.org
+                      General: office@stritaparish.org<br />
+                      Pastor: pastor@stritaparish.org
                     </p>
                   </div>
                 </div>

@@ -37,11 +37,11 @@ const Header: React.FC = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center">
                 <Phone className="h-4 w-4 mr-1" />
-                <span>(555) 123-4567</span>
+                <span>+91 8788653451</span>
               </div>
               <div className="flex items-center">
                 <Mail className="h-4 w-4 mr-1" />
-                <span>office@stmaryparish.org</span>
+                <span>office@stritaparish.org</span>
               </div>
             </div>
           </div>
@@ -57,7 +57,7 @@ const Header: React.FC = () => {
               <Cross className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-blue-900">St. Mary's Parish</h1>
+              <h1 className="text-2xl font-bold text-blue-900">St. Rita's Parish</h1>
               <p className="text-sm text-gray-600">Catholic Church</p>
             </div>
           </Link>

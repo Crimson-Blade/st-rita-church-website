@@ -8,7 +8,7 @@ const About: React.FC = () => {
       <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <h1 className="text-4xl lg:text-5xl font-bold mb-6">About St. Mary's Parish</h1>
+            <h1 className="text-4xl lg:text-5xl font-bold mb-6">About St. Rita's Parish</h1>
             <p className="text-xl text-blue-100 max-w-3xl mx-auto">
               For over 75 years, we have been a beacon of faith, hope, and love in our community.
             </p>
@@ -92,7 +92,7 @@ const About: React.FC = () => {
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Our History</h2>
             <div className="prose prose-lg max-w-none">
               <p className="text-gray-700 mb-6">
-                St. Mary's Parish was established in 1948 by Father Michael O'Sullivan, who saw the need 
+                St. Rita's Parish was established in 1948 by Father Michael O'Sullivan, who saw the need 
                 for a Catholic church to serve the growing community. What began as a small congregation 
                 meeting in a converted storefront has grown into a vibrant parish of over 1,200 families.
               </p>
@@ -102,7 +102,7 @@ const About: React.FC = () => {
                 providing space for religious education, community events, and fellowship.
               </p>
               <p className="text-gray-700">
-                Throughout our history, St. Mary's has been committed to serving not only our parish family 
+                Throughout our history, St. Rita's has been committed to serving not only our parish family 
                 but the broader community through various outreach programs, food drives, and charitable works. 
                 We continue this tradition today as we look toward the future with hope and faith.
               </p>

@@ -14,7 +14,7 @@ const Hero: React.FC = () => {
           <div>
             <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
               Welcome to{' '}
-              <span className="text-yellow-300">St. Mary's</span>
+              <span className="text-yellow-300">St. Rita's</span>
             </h1>
             <p className="text-xl mb-8 text-blue-100 leading-relaxed">
               A Catholic community where faith comes alive through worship, service, 
