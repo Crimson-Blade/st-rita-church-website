@@ -9,6 +9,7 @@ import BlogPost from './pages/BlogPost';
 import Ministries from './pages/Ministries';
 import NoticeBoard from './pages/NoticeBoard';
 import MassTimes from './pages/MassTimes';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -32,6 +33,8 @@ function App() {
           <Route path="/feedback" element={<div className="p-8 text-center">Feedback - Coming Soon</div>} />
           <Route path="/announcements" element={<NoticeBoard />} />
           <Route path="/announcements/:slug" element={<div className="p-8 text-center">Announcement Details - Coming Soon</div>} />
+          {/* 404 Catch-all route */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
     </Router>

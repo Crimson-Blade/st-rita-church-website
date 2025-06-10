@@ -19,5 +19,6 @@ export {
   Facebook,
   Instagram,
   Youtube,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Home
 } from 'lucide-react';
