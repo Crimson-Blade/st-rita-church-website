@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, User, ArrowLeft, Share2, BookOpen, ImageIcon } from '../components/Icons';
 import { strapiApi } from '../services/api';
+import { CustomBlocksRenderer } from '../components/BlocksRenderer';
 import type { BlogPost } from '../types';
 
 const BlogPostPage: React.FC = () => {
@@ -9,6 +10,11 @@ const BlogPostPage: React.FC = () => {
   const [blogPost, setBlogPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [shareToast, setShareToast] = useState<{ show: boolean; message: string; type: 'success' | 'error' }>({
+    show: false,
+    message: '',
+    type: 'success'
+  });
 
   useEffect(() => {
     const fetchBlogPost = async () => {
@@ -40,52 +46,216 @@ const BlogPostPage: React.FC = () => {
   const mockBlogPost: BlogPost = {
     id: 1,
     title: 'Preparing Our Hearts for Lent',
-    content: `
-      <p>As we approach the season of Lent, it is important to prepare our hearts and minds for this sacred time of reflection, prayer, and penance. Lent is not merely a period of giving up certain luxuries or habits; it is a profound spiritual journey that calls us to conversion and renewal.</p>
-
-      <h3>The Three Pillars of Lent</h3>
-      <p>The Church teaches us that Lent is built upon three fundamental practices:</p>
-      
-      <h4>1. Prayer</h4>
-      <p>During Lent, we are called to deepen our prayer life. This might mean setting aside additional time for personal prayer, attending daily Mass more frequently, or participating in special Lenten devotions like the Stations of the Cross. Prayer opens our hearts to God's grace and helps us discern His will for our lives.</p>
-
-      <h4>2. Fasting</h4>
-      <p>Fasting is not just about abstaining from food; it's about creating space in our lives for God. When we fast, we acknowledge our dependence on God rather than on material things. This practice helps us develop self-discipline and reminds us of those who go without by necessity rather than choice.</p>
-
-      <h4>3. Almsgiving</h4>
-      <p>Giving to those in need is an essential part of Lenten observance. Through acts of charity and service, we live out Christ's commandment to love our neighbor as ourselves. Almsgiving transforms our hearts and helps us see Christ in the faces of those we serve.</p>
-
-      <h3>Making Lent Meaningful</h3>
-      <p>To make this Lent truly transformative, consider these practical suggestions:</p>
-      
-      <ul>
-        <li>Choose one specific area of your spiritual life to focus on throughout the season</li>
-        <li>Participate in parish Lenten programs and retreats</li>
-        <li>Read spiritual books or Scripture passages that challenge and inspire you</li>
-        <li>Volunteer for parish ministries or community service projects</li>
-        <li>Practice acts of kindness and forgiveness in your daily relationships</li>
-      </ul>
-
-      <h3>The Journey to Easter</h3>
-      <p>Remember that Lent is not an end in itself, but a preparation for the great celebration of Easter. Every sacrifice we make, every prayer we offer, and every act of charity we perform during these forty days prepares us to celebrate more fully the resurrection of our Lord.</p>
-
-      <p>As we begin this Lenten journey together as a parish family, let us support one another in prayer and encourage each other in our efforts to grow closer to Christ. May this season be a time of true conversion and spiritual renewal for all of us.</p>
-
-      <p><em>May God bless you abundantly during this holy season.</em></p>
-    `,
+    content: [
+      {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'text',
+            text: 'As we approach the season of Lent, it is important to prepare our hearts and minds for this sacred time of reflection, prayer, and penance. Lent is not merely a period of giving up certain luxuries or habits; it is a profound spiritual journey that calls us to conversion and renewal.'
+          }
+        ]
+      },
+      {
+        type: 'heading',
+        level: 3,
+        children: [{ type: 'text', text: 'The Three Pillars of Lent' }]
+      },
+      {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'text',
+            text: 'The Church teaches us that Lent is built upon three fundamental practices:'
+          }
+        ]
+      },
+      {
+        type: 'heading',
+        level: 4,
+        children: [{ type: 'text', text: '1. Prayer' }]
+      },
+      {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'text',
+            text: 'During Lent, we are called to deepen our prayer life. This might mean setting aside additional time for personal prayer, attending daily Mass more frequently, or participating in special Lenten devotions like the Stations of the Cross. Prayer opens our hearts to God\'s grace and helps us discern His will for our lives.'
+          }
+        ]
+      },
+      {
+        type: 'heading',
+        level: 4,
+        children: [{ type: 'text', text: '2. Fasting' }]
+      },
+      {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'text',
+            text: 'Fasting is not just about abstaining from food; it\'s about creating space in our lives for God. When we fast, we acknowledge our dependence on God rather than on material things. This practice helps us develop self-discipline and reminds us of those who go without by necessity rather than choice.'
+          }
+        ]
+      },
+      {
+        type: 'heading',
+        level: 4,
+        children: [{ type: 'text', text: '3. Almsgiving' }]
+      },
+      {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'text',
+            text: 'Giving to those in need is an essential part of Lenten observance. Through acts of charity and service, we live out Christ\'s commandment to love our neighbor as ourselves. Almsgiving transforms our hearts and helps us see Christ in the faces of those we serve.'
+          }
+        ]
+      },
+      {
+        type: 'heading',
+        level: 3,
+        children: [{ type: 'text', text: 'Making Lent Meaningful' }]
+      },
+      {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'text',
+            text: 'To make this Lent truly transformative, consider these practical suggestions:'
+          }
+        ]
+      },
+      {
+        type: 'list',
+        format: 'unordered',
+        children: [
+          {
+            type: 'list-item',
+            children: [
+              {
+                type: 'text',
+                text: 'Choose one specific area of your spiritual life to focus on throughout the season'
+              }
+            ]
+          },
+          {
+            type: 'list-item',
+            children: [
+              {
+                type: 'text',
+                text: 'Participate in parish Lenten programs and retreats'
+              }
+            ]
+          },
+          {
+            type: 'list-item',
+            children: [
+              {
+                type: 'text',
+                text: 'Read spiritual books or Scripture passages that challenge and inspire you'
+              }
+            ]
+          },
+          {
+            type: 'list-item',
+            children: [
+              {
+                type: 'text',
+                text: 'Volunteer for parish ministries or community service projects'
+              }
+            ]
+          },
+          {
+            type: 'list-item',
+            children: [
+              {
+                type: 'text',
+                text: 'Practice acts of kindness and forgiveness in your daily relationships'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        type: 'heading',
+        level: 3,
+        children: [{ type: 'text', text: 'The Journey to Easter' }]
+      },
+      {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'text',
+            text: 'Remember that Lent is not an end in itself, but a preparation for the great celebration of Easter. Every sacrifice we make, every prayer we offer, and every act of charity we perform during these forty days prepares us to celebrate more fully the resurrection of our Lord.'
+          }
+        ]
+      },
+      {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'text',
+            text: 'As we begin this Lenten journey together as a parish family, let us support one another in prayer and encourage each other in our efforts to grow closer to Christ. May this season be a time of true conversion and spiritual renewal for all of us.'
+          }
+        ]
+      },
+      {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'text',
+            text: 'May God bless you abundantly during this holy season.',
+            italic: true
+          }
+        ]
+      }
+    ],
     excerpt: 'Discover meaningful ways to observe Lent and grow closer to God through prayer, fasting, and almsgiving.',
     publishedAt: '2024-02-28',
     author: 'Fr. David Martinez',
     slug: 'preparing-hearts-for-lent',
-    featuredImage: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=1200',
+    featuredImage: 'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=1200',
     gallery: [
-      'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=800',
       'https://images.pexels.com/photos/208315/pexels-photo-208315.jpeg?auto=compress&cs=tinysrgb&w=800',
       'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=800'
     ]
   };
 
   const displayPost = blogPost || mockBlogPost;
+
+  const handleShare = async () => {
+    const shareData = {
+      title: displayPost.title,
+      text: displayPost.excerpt,
+      url: window.location.href
+    };
+
+    try {
+      // Check if Web Share API is supported (mobile devices)
+      if (navigator.share) {
+        await navigator.share(shareData);
+        showToast('Shared successfully!', 'success');
+      } else {
+        // Fallback for desktop: copy to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        showToast('Link copied to clipboard!', 'success');
+      }
+    } catch (error) {
+      // Handle user cancellation or other errors
+      if (error.name !== 'AbortError') {
+        showToast('Failed to share. Please try again.', 'error');
+      }
+    }
+  };
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setShareToast({ show: true, message, type });
+    setTimeout(() => {
+      setShareToast({ show: false, message: '', type: 'success' });
+    }, 3000);
+  };
 
   if (loading) {
     return (
@@ -136,7 +306,7 @@ const BlogPostPage: React.FC = () => {
         backgroundAttachment: 'fixed'
       }}
     >
-      <div className="absolute inset-0 bg-white/90"></div>
+      {/* <div className="absolute inset-0 bg-white/90"></div> */}
       
       {/* Navigation */}
       <div className="bg-white/95 backdrop-blur-sm shadow-sm relative z-10">
@@ -146,7 +316,7 @@ const BlogPostPage: React.FC = () => {
             className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Blog
+            Back to Blogs
           </Link>
         </div>
       </div>
@@ -155,7 +325,7 @@ const BlogPostPage: React.FC = () => {
       <article className="container mx-auto px-4 py-12 relative z-10">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <header className="mb-8">
+          <header className="bg-white rounded-lg shadow-lg p-8 mb-8">
             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               {displayPost.title}
             </h1>
@@ -168,7 +338,10 @@ const BlogPostPage: React.FC = () => {
                 <span>{formatDate(displayPost.publishedAt)}</span>
               </div>
               
-              <button className="flex items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+              <button 
+                onClick={handleShare}
+                className="flex items-center text-gray-600 hover:text-blue-600 transition-colors duration-200"
+              >
                 <Share2 className="h-5 w-5 mr-2" />
                 Share
               </button>
@@ -188,10 +361,9 @@ const BlogPostPage: React.FC = () => {
 
           {/* Content */}
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-            <div 
-              className="prose prose-lg max-w-none"
-              dangerouslySetInnerHTML={{ __html: displayPost.content }}
-            />
+            <div className="prose prose-lg max-w-none">
+              <CustomBlocksRenderer content={displayPost.content} />
+            </div>
           </div>
 
           {/* Image Gallery */}
@@ -242,6 +414,15 @@ const BlogPostPage: React.FC = () => {
               ×
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {shareToast.show && (
+        <div className={`fixed bottom-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white transition-opacity duration-300 ${
+          shareToast.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        }`}>
+          {shareToast.message}
         </div>
       )}
     </div>

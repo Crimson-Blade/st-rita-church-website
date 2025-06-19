@@ -1,7 +1,9 @@
+import type { BlocksContent } from '@strapi/blocks-react-renderer';
+
 export interface BlogPost {
   id: number;
   title: string;
-  content: string;
+  content: BlocksContent;
   excerpt: string;
   publishedAt: string;
   author: string;
