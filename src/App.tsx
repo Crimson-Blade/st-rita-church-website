@@ -31,8 +31,6 @@ function App() {
           <Route path="/vocations" element={<div className="p-8 text-center">Vocations - Coming Soon</div>} />
           <Route path="/donate" element={<div className="p-8 text-center">Donate - Coming Soon</div>} />
           <Route path="/feedback" element={<div className="p-8 text-center">Feedback - Coming Soon</div>} />
-          <Route path="/announcements" element={<NoticeBoard />} />
-          <Route path="/announcements/:slug" element={<div className="p-8 text-center">Announcement Details - Coming Soon</div>} />
           {/* 404 Catch-all route */}
           <Route path="*" element={<NotFound />} />
         </Routes>

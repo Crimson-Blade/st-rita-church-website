@@ -1,6 +1,5 @@
 import axios from 'axios';
 import type { 
-  Announcement, 
   BlogPost, 
   Event, 
   Ministry, 
@@ -21,14 +20,24 @@ const api = axios.create({
 });
 
 export const strapiApi = {
-  // Announcements
-  async getAnnouncements(): Promise<Announcement[]> {
+  // Notice Board Items (includes announcements, images, and posters)
+  async getNoticeBoardItems(): Promise<NoticeBoardItem[]> {
     try {
-      const response = await api.get('/announcements?sort=publishedAt:desc');
+      const response = await api.get('/notice-board-items?sort=publishedAt:desc');
       return response.data.data || [];
     } catch (error) {
-      console.error('Error fetching announcements:', error);
+      console.error('Error fetching notice board items:', error);
       return [];
+    }
+  },
+
+  async getNoticeBoardItem(slug: string): Promise<NoticeBoardItem | null> {
+    try {
+      const response = await api.get(`/notice-board-items?filters[slug][$eq]=${slug}`);
+      return response.data.data[0] || null;
+    } catch (error) {
+      console.error('Error fetching notice board item:', error);
+      return null;
     }
   },
 
@@ -130,17 +139,6 @@ export const strapiApi = {
       return response.data.data || [];
     } catch (error) {
       console.error('Error fetching priests:', error);
-      return [];
-    }
-  },
-
-  // Notice Board Items
-  async getNoticeBoardItems(): Promise<NoticeBoardItem[]> {
-    try {
-      const response = await api.get('/notice-board-items?sort=publishedAt:desc');
-      return response.data.data || [];
-    } catch (error) {
-      console.error('Error fetching notice board items:', error);
       return [];
     }
   },

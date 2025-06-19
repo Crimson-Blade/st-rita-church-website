@@ -19,11 +19,10 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { strapiApi } from '../services/api';
-import type { NoticeBoardItem, Announcement } from '../types';
+import type { NoticeBoardItem } from '../types';
 
 const NoticeBoard: React.FC = () => {
   const [noticeBoardItems, setNoticeBoardItems] = useState<NoticeBoardItem[]>([]);
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [filterType, setFilterType] = useState<'all' | 'announcement' | 'image' | 'poster'>('all');
@@ -34,13 +33,8 @@ const NoticeBoard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [noticeBoardData, announcementsData] = await Promise.all([
-          strapiApi.getNoticeBoardItems(),
-          strapiApi.getAnnouncements()
-        ]);
-        
+        const noticeBoardData = await strapiApi.getNoticeBoardItems();
         setNoticeBoardItems(noticeBoardData);
-        setAnnouncements(announcementsData);
       } catch (error) {
         console.error('Error fetching notice board data:', error);
       } finally {
@@ -63,21 +57,21 @@ const NoticeBoard: React.FC = () => {
   const mockNoticeBoardItems: NoticeBoardItem[] = [
     {
       id: 1,
-      type: 'poster',
-      title: 'Easter Sunday Celebration',
-      imageUrl: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800',
+      type: 'announcement',
+      title: 'Easter Sunday Services',
+      content: 'Join us for our special Easter Sunday celebration with services at 8:00 AM, 10:30 AM, and 6:00 PM. We will have special music, beautiful decorations, and a joyful celebration of Christ\'s resurrection. All are welcome to participate in this most holy day of the Christian calendar.',
       publishedAt: '2024-03-20',
-      slug: 'easter-sunday-poster',
-      description: 'Join us for our special Easter Sunday services'
+      urgent: true,
+      slug: 'easter-sunday-services'
     },
     {
       id: 2,
-      type: 'image',
-      title: 'Parish Picnic Photos',
-      imageUrl: 'https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800',
+      type: 'announcement',
+      title: 'Food Drive Collection',
+      content: 'Help us support local families in need by donating non-perishable food items. Drop off donations in the church lobby during regular hours. Items most needed include canned goods, pasta, rice, and baby food. Thank you for your generosity.',
       publishedAt: '2024-03-18',
-      slug: 'parish-picnic-photos',
-      description: 'Beautiful moments from our recent parish picnic'
+      urgent: false,
+      slug: 'food-drive-collection'
     },
     {
       id: 3,
@@ -86,56 +80,59 @@ const NoticeBoard: React.FC = () => {
       imageUrl: 'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=800',
       publishedAt: '2024-03-15',
       slug: 'lenten-prayer-schedule',
-      description: 'Special prayer times during the Lenten season'
+      description: 'Special prayer times and devotions during the holy season of Lent'
     },
     {
       id: 4,
       type: 'image',
-      title: 'Youth Group Activities',
-      imageUrl: 'https://images.pexels.com/photos/8926553/pexels-photo-8926553.jpeg?auto=compress&cs=tinysrgb&w=800',
+      title: 'Parish Picnic Photos',
+      imageUrl: 'https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800',
       publishedAt: '2024-03-12',
-      slug: 'youth-group-activities',
-      description: 'Our youth group in action during recent activities'
+      slug: 'parish-picnic-photos',
+      description: 'Beautiful moments captured from our recent parish community picnic'
     },
     {
       id: 5,
-      type: 'poster',
-      title: 'First Communion Registration',
-      imageUrl: 'https://images.pexels.com/photos/208315/pexels-photo-208315.jpeg?auto=compress&cs=tinysrgb&w=800',
+      type: 'announcement',
+      title: 'Youth Group Meeting',
+      content: 'All high school students are invited to join our youth group meeting this Friday at 7:00 PM in the parish hall. We will discuss upcoming service projects and plan our spring retreat. Pizza will be provided!',
       publishedAt: '2024-03-10',
-      slug: 'first-communion-registration',
-      description: 'Registration now open for First Communion classes'
+      urgent: false,
+      slug: 'youth-group-meeting'
     },
     {
       id: 6,
+      type: 'poster',
+      title: 'First Communion Registration',
+      imageUrl: 'https://images.pexels.com/photos/208315/pexels-photo-208315.jpeg?auto=compress&cs=tinysrgb&w=800',
+      publishedAt: '2024-03-08',
+      slug: 'first-communion-registration',
+      description: 'Registration now open for First Communion classes starting in September'
+    },
+    {
+      id: 7,
       type: 'image',
       title: 'Church Renovation Progress',
       imageUrl: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800',
-      publishedAt: '2024-03-08',
+      publishedAt: '2024-03-05',
       slug: 'church-renovation-progress',
-      description: 'Updates on our ongoing church renovation project'
+      description: 'Latest updates on our ongoing church renovation and beautification project'
+    },
+    {
+      id: 8,
+      type: 'announcement',
+      title: 'New Parish Office Hours',
+      content: 'Please note our updated parish office hours: Monday-Friday 9:00 AM to 5:00 PM, Saturday 9:00 AM to 1:00 PM. The office will be closed on Sundays. For emergencies, please call our emergency line.',
+      publishedAt: '2024-03-01',
+      urgent: false,
+      slug: 'new-parish-office-hours'
     }
   ];
 
-  // Convert announcements to notice board format
-  const announcementItems: NoticeBoardItem[] = announcements.map(announcement => ({
-    id: announcement.id + 1000, // Offset to avoid ID conflicts
-    type: 'announcement' as const,
-    title: announcement.title,
-    content: announcement.content,
-    publishedAt: announcement.publishedAt,
-    urgent: announcement.urgent,
-    slug: announcement.slug
-  }));
-
-  // Combine all items
-  const allItems = [
-    ...(noticeBoardItems.length > 0 ? noticeBoardItems : mockNoticeBoardItems),
-    ...announcementItems
-  ];
+  const displayItems = noticeBoardItems.length > 0 ? noticeBoardItems : mockNoticeBoardItems;
 
   // Filter and search
-  const filteredItems = allItems.filter(item => {
+  const filteredItems = displayItems.filter(item => {
     const matchesType = filterType === 'all' || item.type === filterType;
     const matchesSearch = searchTerm === '' || 
       item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -279,7 +276,7 @@ const NoticeBoard: React.FC = () => {
                             <span className={`text-xs font-semibold uppercase tracking-wide ${
                               item.urgent ? 'text-red-600' : 'text-blue-600'
                             }`}>
-                              {item.urgent ? 'Urgent' : 'Announcement'}
+                              {item.urgent ? 'Urgent Notice' : 'Announcement'}
                             </span>
                             <div className="flex items-center text-sm text-gray-500 mt-1">
                               <Clock className="h-3 w-3 mr-1" />
@@ -296,13 +293,13 @@ const NoticeBoard: React.FC = () => {
                           {item.content}
                         </p>
                         
-                        <Link
-                          to={`/announcements/${item.slug}`}
+                        <button
+                          onClick={() => openModal(item)}
                           className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm"
                         >
                           Read More
                           <ChevronRight className="h-4 w-4 ml-1" />
-                        </Link>
+                        </button>
                       </div>
                     </div>
                   ) : (
@@ -391,72 +388,117 @@ const NoticeBoard: React.FC = () => {
         </div>
       </section>
 
-      {/* Image Modal */}
-      {selectedItem && (selectedItem.type === 'image' || selectedItem.type === 'poster') && (
+      {/* Modal for viewing full content */}
+      {selectedItem && (
         <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
-          <div className="relative max-w-6xl max-h-full w-full">
+          <div className="relative max-w-4xl max-h-full w-full bg-white rounded-lg overflow-hidden">
             {/* Close Button */}
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 z-10 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-opacity duration-200"
+              className="absolute top-4 right-4 z-10 text-gray-600 hover:text-gray-800 bg-white rounded-full p-2 shadow-lg"
             >
               <X className="h-6 w-6" />
             </button>
             
-            {/* Navigation Buttons */}
-            <button
-              onClick={prevImage}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-opacity duration-200"
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </button>
-            
-            <button
-              onClick={nextImage}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-opacity duration-200"
-            >
-              <ChevronRight className="h-6 w-6" />
-            </button>
-            
-            {/* Image */}
-            <div className="flex flex-col items-center">
-              <img
-                src={selectedItem.imageUrl}
-                alt={selectedItem.title}
-                className="max-w-full max-h-[80vh] object-contain rounded-lg"
-              />
-              
-              {/* Image Info */}
-              <div className="bg-white rounded-lg p-4 mt-4 max-w-2xl w-full">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  {selectedItem.title}
-                </h3>
+            {selectedItem.type === 'announcement' ? (
+              // Announcement Modal
+              <div className="p-8 max-h-[80vh] overflow-y-auto">
+                <div className="flex items-center mb-6">
+                  <div className={`p-3 rounded-full mr-4 ${
+                    selectedItem.urgent ? 'bg-red-100' : 'bg-blue-100'
+                  }`}>
+                    {selectedItem.urgent ? (
+                      <AlertTriangle className={`h-6 w-6 ${selectedItem.urgent ? 'text-red-600' : 'text-blue-600'}`} />
+                    ) : (
+                      <Bell className="h-6 w-6 text-blue-600" />
+                    )}
+                  </div>
+                  <div>
+                    <span className={`text-sm font-semibold uppercase tracking-wide ${
+                      selectedItem.urgent ? 'text-red-600' : 'text-blue-600'
+                    }`}>
+                      {selectedItem.urgent ? 'Urgent Notice' : 'Announcement'}
+                    </span>
+                    <div className="flex items-center text-gray-500 mt-1">
+                      <Clock className="h-4 w-4 mr-1" />
+                      {formatDate(selectedItem.publishedAt)}
+                    </div>
+                  </div>
+                </div>
                 
-                {selectedItem.description && (
-                  <p className="text-gray-600 mb-3">
-                    {selectedItem.description}
+                <h2 className="text-3xl font-bold text-gray-900 mb-6">
+                  {selectedItem.title}
+                </h2>
+                
+                <div className="prose prose-lg max-w-none">
+                  <p className="text-gray-700 leading-relaxed">
+                    {selectedItem.content}
                   </p>
+                </div>
+              </div>
+            ) : (
+              // Image/Poster Modal
+              <div className="flex flex-col">
+                {/* Navigation Buttons for images */}
+                {filteredItems.filter(item => item.type === 'image' || item.type === 'poster').length > 1 && (
+                  <>
+                    <button
+                      onClick={prevImage}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-opacity duration-200"
+                    >
+                      <ChevronLeft className="h-6 w-6" />
+                    </button>
+                    
+                    <button
+                      onClick={nextImage}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-opacity duration-200"
+                    >
+                      <ChevronRight className="h-6 w-6" />
+                    </button>
+                  </>
                 )}
                 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    {formatDate(selectedItem.publishedAt)}
-                  </div>
+                {/* Image */}
+                <div className="flex justify-center bg-gray-100">
+                  <img
+                    src={selectedItem.imageUrl}
+                    alt={selectedItem.title}
+                    className="max-w-full max-h-[60vh] object-contain"
+                  />
+                </div>
+                
+                {/* Image Info */}
+                <div className="p-6">
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                    {selectedItem.title}
+                  </h3>
                   
-                  <div className="flex items-center space-x-3">
-                    <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                      <Share2 className="h-4 w-4 mr-1" />
-                      Share
-                    </button>
-                    <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                      <Download className="h-4 w-4 mr-1" />
-                      Download
-                    </button>
+                  {selectedItem.description && (
+                    <p className="text-gray-600 mb-4">
+                      {selectedItem.description}
+                    </p>
+                  )}
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center text-gray-500">
+                      <Calendar className="h-4 w-4 mr-1" />
+                      {formatDate(selectedItem.publishedAt)}
+                    </div>
+                    
+                    <div className="flex items-center space-x-4">
+                      <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+                        <Share2 className="h-4 w-4 mr-1" />
+                        Share
+                      </button>
+                      <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+                        <Download className="h-4 w-4 mr-1" />
+                        Download
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}

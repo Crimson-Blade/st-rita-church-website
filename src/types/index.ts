@@ -1,12 +1,3 @@
-export interface Announcement {
-  id: number;
-  title: string;
-  content: string;
-  publishedAt: string;
-  urgent: boolean;
-  slug: string;
-}
-
 export interface BlogPost {
   id: number;
   title: string;
