@@ -10,7 +10,7 @@ import type {
   NoticeBoardItem 
 } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337/api';
+const API_BASE_URL = (import.meta.env.VITE_STRAPI_URL?.replace(/\/+$/, '') || 'http://localhost:1337') + '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -19,12 +19,53 @@ const api = axios.create({
   },
 });
 
+// Sanitize notice board item to ensure it has the correct structure
+const sanitizeNoticeBoardItem = (item: NoticeBoardItem): NoticeBoardItem => {
+  const sanitized = { ...item };
+
+  // Check if item has image data
+  const hasImage = Boolean(item.image || item.imageUrl);
+
+  // If type is text but has image data, change to image type
+  if (item.type === 'text' && hasImage) {
+    sanitized.type = 'image';
+    // Keep the urgent flag but note it's not typically used for image types
+    console.log(`Auto-corrected: "${item.title}" changed from text to image due to presence of image data`);
+  }
+
+  // If type is image/poster but no image data, change to text type
+  if ((item.type === 'image' || item.type === 'poster') && !hasImage) {
+    sanitized.type = 'text';
+    // Ensure content exists for text type
+    if (!sanitized.content) {
+      sanitized.content = sanitized.title; // Use title as fallback content
+    }
+    console.log(`Auto-corrected: "${item.title}" changed from ${item.type} to text due to missing image data`);
+  }
+
+  // Clean up fields based on final type
+  if (sanitized.type === 'text') {
+    // For text items, remove image data and ensure content exists
+    sanitized.image = undefined;
+    sanitized.imageUrl = undefined;
+    if (!sanitized.content) {
+      sanitized.content = sanitized.title;
+    }
+  } else {
+    // For image/poster items, urgent flag is not applicable
+    sanitized.urgent = undefined;
+  }
+
+  return sanitized;
+};
+
 export const strapiApi = {
   // Notice Board Items (includes announcements, images, and posters)
   async getNoticeBoardItems(): Promise<NoticeBoardItem[]> {
     try {
-      const response = await api.get('/notice-board-items?sort=publishedAt:desc');
-      return response.data.data || [];
+      const response = await api.get('/notice-board-items?sort=publishedAt:desc&populate=image');
+      const items = response.data.data || [];
+      return items.map(sanitizeNoticeBoardItem);
     } catch (error) {
       console.error('Error fetching notice board items:', error);
       return [];
@@ -33,8 +74,9 @@ export const strapiApi = {
 
   async getNoticeBoardItem(slug: string): Promise<NoticeBoardItem | null> {
     try {
-      const response = await api.get(`/notice-board-items?filters[slug][$eq]=${slug}`);
-      return response.data.data[0] || null;
+      const response = await api.get(`/notice-board-items?filters[slug][$eq]=${slug}&populate=image`);
+      const item = response.data.data[0] || null;
+      return item ? sanitizeNoticeBoardItem(item) : null;
     } catch (error) {
       console.error('Error fetching notice board item:', error);
       return null;

@@ -5,6 +5,7 @@ A modern, responsive website for Catholic parishes built with React, TypeScript,
 ## Features
 
 ### For Parishioners
+
 - **Homepage**: Welcome message, featured announcements, recent blog posts, and upcoming events
 - **Mass Times**: Complete schedule of all masses and services
 - **Blog**: Spiritual reflections and teachings from parish clergy
@@ -17,6 +18,7 @@ A modern, responsive website for Catholic parishes built with React, TypeScript,
 - **Vocations**: Information about religious vocations
 
 ### For Parish Staff
+
 - **Strapi CMS Integration**: Easy content management without coding
 - **Blog Management**: Create and publish blog posts with featured images and galleries
 - **Event Management**: Create events with registration tracking
@@ -38,6 +40,7 @@ The website features beautiful background images of the church:
 The blog system is designed specifically for parish clergy to easily share spiritual content:
 
 ### Features
+
 - **Rich Text Editor**: Easy-to-use editor in Strapi for creating blog posts
 - **Featured Images**: Add compelling visuals to blog posts
 - **Image Galleries**: Include multiple images in blog posts
@@ -47,6 +50,7 @@ The blog system is designed specifically for parish clergy to easily share spiri
 - **SEO Optimized**: Proper meta tags and structured data
 
 ### Content Management
+
 Parish staff can easily manage blog content through Strapi:
 
 1. **Create Posts**: Use the rich text editor to write spiritual reflections
@@ -61,6 +65,7 @@ To set up the Strapi backend for content management:
 ### Required Content Types
 
 #### Blog Posts
+
 - Title (Text)
 - Content (Rich Text)
 - Excerpt (Text)
@@ -70,7 +75,8 @@ To set up the Strapi backend for content management:
 - Gallery (Media - Multiple)
 - Published At (DateTime)
 
-#### Announcements
+#### Announcements (Not updated)
+
 - Title (Text)
 - Content (Rich Text)
 - Urgent (Boolean)
@@ -78,6 +84,7 @@ To set up the Strapi backend for content management:
 - Published At (DateTime)
 
 #### Events
+
 - Title (Text)
 - Description (Rich Text)
 - Date (Date)
@@ -89,6 +96,7 @@ To set up the Strapi backend for content management:
 - Slug (Text)
 
 #### Contact Submissions
+
 - Name (Text)
 - Email (Email)
 - Phone (Text)
@@ -97,7 +105,9 @@ To set up the Strapi backend for content management:
 - Submitted At (DateTime)
 
 ### Environment Variables
+
 Create a `.env` file with:
+
 ```
 VITE_STRAPI_URL=http://localhost:1337/api
 VITE_STRAPI_TOKEN=your_strapi_api_token_here

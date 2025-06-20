@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  Bell, 
-  Calendar, 
-  Clock, 
-  Image as ImageIcon, 
-  FileText, 
+// import { Link } from 'react-router-dom';
+import {
+  Bell,
+  Calendar,
+  Clock,
+  Image as ImageIcon,
+  // FileText, 
   Filter,
   Grid,
   List,
@@ -19,16 +19,46 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { strapiApi } from '../services/api';
-import type { NoticeBoardItem } from '../types';
+import type { NoticeBoardItem, StrapiImage } from '../types';
 
 const NoticeBoard: React.FC = () => {
   const [noticeBoardItems, setNoticeBoardItems] = useState<NoticeBoardItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [filterType, setFilterType] = useState<'all' | 'announcement' | 'image' | 'poster'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'text' | 'image' | 'poster'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItem, setSelectedItem] = useState<NoticeBoardItem | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Utility function to get the appropriate image URL from Strapi image data
+  const getImageUrl = (image: StrapiImage | undefined, size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original' = 'medium'): string | undefined => {
+    if (!image) return undefined;
+
+    const baseUrl = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
+
+    let imageUrl: string;
+    if (size === 'original') {
+      imageUrl = image.url;
+    } else {
+      imageUrl = image.formats?.[size]?.url || image.url;
+    }
+
+    // If the URL is relative, prepend the base URL
+    if (imageUrl.startsWith('/')) {
+      return `${baseUrl}${imageUrl}`;
+    }
+
+    return imageUrl;
+  };
+
+  // Get image URL for an item (handles both Strapi format and legacy imageUrl)
+  const getItemImageUrl = (item: NoticeBoardItem, size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original' = 'medium'): string | undefined => {
+    if (item.image) {
+      return getImageUrl(item.image, size);
+    }
+    return item.imageUrl; // Fallback for mock data
+  };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +87,7 @@ const NoticeBoard: React.FC = () => {
   const mockNoticeBoardItems: NoticeBoardItem[] = [
     {
       id: 1,
-      type: 'announcement',
+      type: 'text',
       title: 'Easter Sunday Services',
       content: 'Join us for our special Easter Sunday celebration with services at 8:00 AM, 10:30 AM, and 6:00 PM. We will have special music, beautiful decorations, and a joyful celebration of Christ\'s resurrection. All are welcome to participate in this most holy day of the Christian calendar.',
       publishedAt: '2024-03-20',
@@ -66,7 +96,7 @@ const NoticeBoard: React.FC = () => {
     },
     {
       id: 2,
-      type: 'announcement',
+      type: 'text',
       title: 'Food Drive Collection',
       content: 'Help us support local families in need by donating non-perishable food items. Drop off donations in the church lobby during regular hours. Items most needed include canned goods, pasta, rice, and baby food. Thank you for your generosity.',
       publishedAt: '2024-03-18',
@@ -80,7 +110,7 @@ const NoticeBoard: React.FC = () => {
       imageUrl: 'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=800',
       publishedAt: '2024-03-15',
       slug: 'lenten-prayer-schedule',
-      description: 'Special prayer times and devotions during the holy season of Lent'
+      content: 'Special prayer times and devotions during the holy season of Lent'
     },
     {
       id: 4,
@@ -89,11 +119,11 @@ const NoticeBoard: React.FC = () => {
       imageUrl: 'https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800',
       publishedAt: '2024-03-12',
       slug: 'parish-picnic-photos',
-      description: 'Beautiful moments captured from our recent parish community picnic'
+      content: 'Beautiful moments captured from our recent parish community picnic'
     },
     {
       id: 5,
-      type: 'announcement',
+      type: 'text',
       title: 'Youth Group Meeting',
       content: 'All high school students are invited to join our youth group meeting this Friday at 7:00 PM in the parish hall. We will discuss upcoming service projects and plan our spring retreat. Pizza will be provided!',
       publishedAt: '2024-03-10',
@@ -107,7 +137,7 @@ const NoticeBoard: React.FC = () => {
       imageUrl: 'https://images.pexels.com/photos/208315/pexels-photo-208315.jpeg?auto=compress&cs=tinysrgb&w=800',
       publishedAt: '2024-03-08',
       slug: 'first-communion-registration',
-      description: 'Registration now open for First Communion classes starting in September'
+      content: 'Registration now open for First Communion classes starting in September'
     },
     {
       id: 7,
@@ -116,11 +146,11 @@ const NoticeBoard: React.FC = () => {
       imageUrl: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800',
       publishedAt: '2024-03-05',
       slug: 'church-renovation-progress',
-      description: 'Latest updates on our ongoing church renovation and beautification project'
+      content: 'Latest updates on our ongoing church renovation and beautification project'
     },
     {
       id: 8,
-      type: 'announcement',
+      type: 'text',
       title: 'New Parish Office Hours',
       content: 'Please note our updated parish office hours: Monday-Friday 9:00 AM to 5:00 PM, Saturday 9:00 AM to 1:00 PM. The office will be closed on Sundays. For emergencies, please call our emergency line.',
       publishedAt: '2024-03-01',
@@ -134,11 +164,10 @@ const NoticeBoard: React.FC = () => {
   // Filter and search
   const filteredItems = displayItems.filter(item => {
     const matchesType = filterType === 'all' || item.type === filterType;
-    const matchesSearch = searchTerm === '' || 
+    const matchesSearch = searchTerm === '' ||
       item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (item.content && item.content.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+      (item.content && item.content.toLowerCase().includes(searchTerm.toLowerCase()));
+
     return matchesType && matchesSearch;
   });
 
@@ -202,11 +231,11 @@ const NoticeBoard: React.FC = () => {
                 <Filter className="h-5 w-5 text-gray-600" />
                 <select
                   value={filterType}
-                  onChange={(e) => setFilterType(e.target.value as any)}
+                  onChange={(e) => setFilterType(e.target.value as typeof filterType)}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="all">All Items</option>
-                  <option value="announcement">Announcements</option>
+                  <option value="text">Announcements</option>
                   <option value="image">Photos</option>
                   <option value="poster">Posters</option>
                 </select>
@@ -246,26 +275,23 @@ const NoticeBoard: React.FC = () => {
               ))}
             </div>
           ) : filteredItems.length > 0 ? (
-            <div className={`grid ${
-              viewMode === 'grid' 
-                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+            <div className={`grid ${viewMode === 'grid'
+                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
                 : 'grid-cols-1 max-w-4xl mx-auto'
-            } gap-6`}>
+              } gap-6`}>
               {filteredItems.map((item) => (
                 <div
                   key={`${item.type}-${item.id}`}
-                  className={`group relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 ${
-                    viewMode === 'list' ? 'flex' : ''
-                  }`}
+                  className={`group relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 ${viewMode === 'list' ? 'flex' : ''
+                    }`}
                 >
-                  {item.type === 'announcement' ? (
+                  {item.type === 'text' ? (
                     // Announcement Card
                     <div className={`bg-white ${viewMode === 'list' ? 'flex w-full' : 'h-full'}`}>
                       <div className={`p-6 ${viewMode === 'list' ? 'flex-1' : ''}`}>
                         <div className="flex items-center mb-4">
-                          <div className={`p-2 rounded-full mr-3 ${
-                            item.urgent ? 'bg-red-100' : 'bg-blue-100'
-                          }`}>
+                          <div className={`p-2 rounded-full mr-3 ${item.urgent ? 'bg-red-100' : 'bg-blue-100'
+                            }`}>
                             {item.urgent ? (
                               <AlertTriangle className={`h-5 w-5 ${item.urgent ? 'text-red-600' : 'text-blue-600'}`} />
                             ) : (
@@ -273,9 +299,8 @@ const NoticeBoard: React.FC = () => {
                             )}
                           </div>
                           <div>
-                            <span className={`text-xs font-semibold uppercase tracking-wide ${
-                              item.urgent ? 'text-red-600' : 'text-blue-600'
-                            }`}>
+                            <span className={`text-xs font-semibold uppercase tracking-wide ${item.urgent ? 'text-red-600' : 'text-blue-600'
+                              }`}>
                               {item.urgent ? 'Urgent Notice' : 'Announcement'}
                             </span>
                             <div className="flex items-center text-sm text-gray-500 mt-1">
@@ -284,15 +309,15 @@ const NoticeBoard: React.FC = () => {
                             </div>
                           </div>
                         </div>
-                        
+
                         <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
                           {item.title}
                         </h3>
-                        
+
                         <p className="text-gray-600 text-sm line-clamp-3 mb-4">
                           {item.content}
                         </p>
-                        
+
                         <button
                           onClick={() => openModal(item)}
                           className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm"
@@ -304,16 +329,15 @@ const NoticeBoard: React.FC = () => {
                     </div>
                   ) : (
                     // Image/Poster Card
-                    <div 
+                    <div
                       className={`cursor-pointer ${viewMode === 'list' ? 'flex w-full' : 'h-full'}`}
                       onClick={() => openModal(item)}
                     >
-                      <div className={`relative ${
-                        viewMode === 'list' ? 'w-48 h-32 flex-shrink-0' : 'h-64'
-                      } bg-gray-200 overflow-hidden`}>
-                        {item.imageUrl ? (
+                      <div className={`relative ${viewMode === 'list' ? 'w-48 h-32 flex-shrink-0' : 'h-64'
+                        } bg-gray-200 overflow-hidden`}>
+                        {getItemImageUrl(item, 'medium') ? (
                           <img
-                            src={item.imageUrl}
+                            src={getItemImageUrl(item, 'medium')}
                             alt={item.title}
                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                           />
@@ -322,43 +346,42 @@ const NoticeBoard: React.FC = () => {
                             <ImageIcon className="h-12 w-12 text-blue-400" />
                           </div>
                         )}
-                        
+
                         {/* Overlay */}
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-300 flex items-center justify-center">
                           <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <Eye className="h-8 w-8 text-white" />
                           </div>
                         </div>
-                        
+
                         {/* Type Badge */}
                         <div className="absolute top-2 left-2">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            item.type === 'poster' 
-                              ? 'bg-purple-100 text-purple-800' 
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${item.type === 'poster'
+                              ? 'bg-purple-100 text-purple-800'
                               : 'bg-green-100 text-green-800'
-                          }`}>
+                            }`}>
                             {item.type === 'poster' ? 'Poster' : 'Photo'}
                           </span>
                         </div>
                       </div>
-                      
+
                       <div className={`p-4 bg-white ${viewMode === 'list' ? 'flex-1' : ''}`}>
                         <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
                           {item.title}
                         </h3>
-                        
-                        {item.description && (
+
+                        {item.content && (
                           <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                            {item.description}
+                            {item.content}
                           </p>
                         )}
-                        
+
                         <div className="flex items-center justify-between">
                           <div className="flex items-center text-sm text-gray-500">
                             <Calendar className="h-3 w-3 mr-1" />
                             {formatDate(item.publishedAt)}
                           </div>
-                          
+
                           <div className="flex items-center space-x-2">
                             <button className="text-gray-400 hover:text-blue-600 transition-colors">
                               <Share2 className="h-4 w-4" />
@@ -379,8 +402,8 @@ const NoticeBoard: React.FC = () => {
               <Bell className="h-16 w-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">No items found</h3>
               <p className="text-gray-600">
-                {searchTerm || filterType !== 'all' 
-                  ? 'Try adjusting your search or filter criteria.' 
+                {searchTerm || filterType !== 'all'
+                  ? 'Try adjusting your search or filter criteria.'
                   : 'Check back soon for new notices and updates.'}
               </p>
             </div>
@@ -399,14 +422,13 @@ const NoticeBoard: React.FC = () => {
             >
               <X className="h-6 w-6" />
             </button>
-            
-            {selectedItem.type === 'announcement' ? (
-              // Announcement Modal
+
+            {selectedItem.type === 'text' ? (
+              // Text Modal
               <div className="p-8 max-h-[80vh] overflow-y-auto">
                 <div className="flex items-center mb-6">
-                  <div className={`p-3 rounded-full mr-4 ${
-                    selectedItem.urgent ? 'bg-red-100' : 'bg-blue-100'
-                  }`}>
+                  <div className={`p-3 rounded-full mr-4 ${selectedItem.urgent ? 'bg-red-100' : 'bg-blue-100'
+                    }`}>
                     {selectedItem.urgent ? (
                       <AlertTriangle className={`h-6 w-6 ${selectedItem.urgent ? 'text-red-600' : 'text-blue-600'}`} />
                     ) : (
@@ -414,9 +436,8 @@ const NoticeBoard: React.FC = () => {
                     )}
                   </div>
                   <div>
-                    <span className={`text-sm font-semibold uppercase tracking-wide ${
-                      selectedItem.urgent ? 'text-red-600' : 'text-blue-600'
-                    }`}>
+                    <span className={`text-sm font-semibold uppercase tracking-wide ${selectedItem.urgent ? 'text-red-600' : 'text-blue-600'
+                      }`}>
                       {selectedItem.urgent ? 'Urgent Notice' : 'Announcement'}
                     </span>
                     <div className="flex items-center text-gray-500 mt-1">
@@ -425,11 +446,11 @@ const NoticeBoard: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <h2 className="text-3xl font-bold text-gray-900 mb-6">
                   {selectedItem.title}
                 </h2>
-                
+
                 <div className="prose prose-lg max-w-none">
                   <p className="text-gray-700 leading-relaxed">
                     {selectedItem.content}
@@ -448,7 +469,7 @@ const NoticeBoard: React.FC = () => {
                     >
                       <ChevronLeft className="h-6 w-6" />
                     </button>
-                    
+
                     <button
                       onClick={nextImage}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-opacity duration-200"
@@ -457,34 +478,34 @@ const NoticeBoard: React.FC = () => {
                     </button>
                   </>
                 )}
-                
+
                 {/* Image */}
                 <div className="flex justify-center bg-gray-100">
                   <img
-                    src={selectedItem.imageUrl}
+                    src={getItemImageUrl(selectedItem, 'large') || getItemImageUrl(selectedItem, 'original')}
                     alt={selectedItem.title}
                     className="max-w-full max-h-[60vh] object-contain"
                   />
                 </div>
-                
+
                 {/* Image Info */}
                 <div className="p-6">
                   <h3 className="text-2xl font-semibold text-gray-900 mb-3">
                     {selectedItem.title}
                   </h3>
-                  
-                  {selectedItem.description && (
+
+                  {selectedItem.content && (
                     <p className="text-gray-600 mb-4">
-                      {selectedItem.description}
+                      {selectedItem.content}
                     </p>
                   )}
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center text-gray-500">
                       <Calendar className="h-4 w-4 mr-1" />
                       {formatDate(selectedItem.publishedAt)}
                     </div>
-                    
+
                     <div className="flex items-center space-x-4">
                       <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
                         <Share2 className="h-4 w-4 mr-1" />

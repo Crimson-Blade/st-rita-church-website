@@ -1,8 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Bell, Clock, ArrowRight, AlertTriangle, Image as ImageIcon, FileText, Eye } from 'lucide-react';
+import { Bell, Clock, ArrowRight, AlertTriangle, Image as ImageIcon, Eye } from 'lucide-react';
 import { strapiApi } from '../../services/api';
-import type { NoticeBoardItem } from '../../types';
+import type { NoticeBoardItem, StrapiImage } from '../../types';
+
+// Utility to get image URL from Strapi image object or fallback to imageUrl
+const getImageUrl = (
+  image: StrapiImage | undefined,
+  size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original' = 'medium'
+): string | undefined => {
+  if (!image) return undefined;
+  const baseUrl = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
+  let imageUrl: string;
+  if (size === 'original') {
+    imageUrl = image.url;
+  } else {
+    imageUrl = image.formats?.[size]?.url || image.url;
+  }
+  if (imageUrl.startsWith('/')) {
+    return `${baseUrl}${imageUrl}`;
+  }
+  return imageUrl;
+};
+
+const getItemImageUrl = (
+  item: NoticeBoardItem,
+  size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original' = 'medium'
+): string | undefined => {
+  if (item.image) {
+    return getImageUrl(item.image, size);
+  }
+  return item.imageUrl;
+};
 
 const FeaturedNotices: React.FC = () => {
   const [notices, setNotices] = useState<NoticeBoardItem[]>([]);
@@ -35,7 +64,7 @@ const FeaturedNotices: React.FC = () => {
   const mockNotices: NoticeBoardItem[] = [
     {
       id: 1,
-      type: 'announcement',
+      type: 'text',
       title: 'Easter Sunday Services',
       content: 'Join us for our special Easter Sunday celebration with services at 8:00 AM, 10:30 AM, and 6:00 PM. Special music and decorations will enhance our worship.',
       publishedAt: '2024-03-20',
@@ -46,7 +75,7 @@ const FeaturedNotices: React.FC = () => {
       id: 2,
       type: 'poster',
       title: 'Lenten Prayer Schedule',
-      description: 'Special prayer times and devotions during the holy season of Lent',
+      content: 'Special prayer times and devotions during the holy season of Lent',
       imageUrl: 'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=800',
       publishedAt: '2024-03-18',
       urgent: false,
@@ -56,7 +85,7 @@ const FeaturedNotices: React.FC = () => {
       id: 3,
       type: 'image',
       title: 'Parish Picnic Photos',
-      description: 'Beautiful moments captured from our recent parish community picnic',
+      content: 'Beautiful moments captured from our recent parish community picnic',
       imageUrl: 'https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800',
       publishedAt: '2024-03-15',
       urgent: false,
@@ -115,7 +144,7 @@ const FeaturedNotices: React.FC = () => {
               key={notice.id}
               className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-200 hover:scale-105 hover:shadow-xl"
             >
-              {notice.type === 'announcement' ? (
+              {notice.type === 'text' ? (
                 // Announcement Card
                 <div className="p-6">
                   <div className="flex items-center mb-4">
@@ -161,9 +190,9 @@ const FeaturedNotices: React.FC = () => {
                 // Image/Poster Card
                 <div>
                   <div className="relative h-48 bg-gray-200 overflow-hidden group">
-                    {notice.imageUrl ? (
+                    {getItemImageUrl(notice, 'medium') ? (
                       <img
-                        src={notice.imageUrl}
+                        src={getItemImageUrl(notice, 'medium')}
                         alt={notice.title}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
@@ -197,9 +226,9 @@ const FeaturedNotices: React.FC = () => {
                       {notice.title}
                     </h3>
                     
-                    {notice.description && (
+                    {notice.content && (
                       <p className="text-gray-600 mb-4 line-clamp-2">
-                        {notice.description}
+                        {notice.content}
                       </p>
                     )}
                     
