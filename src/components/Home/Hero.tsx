@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Calendar, Users, Heart } from 'lucide-react';
+import { Calendar, Users, Heart } from 'lucide-react';
 
 const Hero: React.FC = () => {
   return (
@@ -31,10 +31,10 @@ const Hero: React.FC = () => {
             
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-12">
               <Link
-                to="/mass-times"
+                to="/mass-timings"
                 className="bg-yellow-500 hover:bg-yellow-600 text-blue-900 px-8 py-4 rounded-lg font-semibold transition-colors duration-200 text-center"
               >
-                View Mass Times
+                View Mass Timings
               </Link>
               <Link
                 to="/about"

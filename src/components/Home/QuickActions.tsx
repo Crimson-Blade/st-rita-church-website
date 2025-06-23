@@ -6,7 +6,6 @@ import {
   BookOpen, 
   Users, 
   Phone, 
-  MessageCircle,
   Bell
 } from 'lucide-react';
 
@@ -14,9 +13,9 @@ const QuickActions: React.FC = () => {
   const actions = [
     {
       icon: Calendar,
-      title: 'Mass Times',
+      title: 'Mass Timings',
       description: 'View our weekly mass schedule',
-      link: '/mass-times',
+      link: '/mass-timings',
       color: 'bg-blue-500 hover:bg-blue-600'
     },
     {

@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
 
           {/* Mass Times */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Mass Times</h4>
+            <h4 className="text-lg font-semibold mb-4">Mass Timings</h4>
             <div className="space-y-2 text-sm text-blue-200">
               <div className="flex justify-between">
                 <span>Sunday:</span>
@@ -68,7 +68,7 @@ const Footer: React.FC = () => {
               </div>
               <div className="mt-3">
                 <Link
-                  to="/mass-times"
+                  to="/mass-timings"
                   className="text-blue-300 hover:text-white text-sm underline"
                 >
                   View Full Schedule

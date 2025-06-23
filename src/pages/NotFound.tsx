@@ -79,7 +79,7 @@ const NotFound: React.FC = () => {
           <p className="text-white/80 mb-4">Perhaps you were looking for:</p>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
             <Link 
-              to="/mass-times" 
+              to="/mass-timings" 
               className="text-blue-300 hover:text-blue-100 transition-colors duration-200"
             >
               Mass Times

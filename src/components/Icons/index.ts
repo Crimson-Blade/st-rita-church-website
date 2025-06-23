@@ -20,5 +20,7 @@ export {
   Instagram,
   Youtube,
   Image as ImageIcon,
-  Home
+  Home,
+  Filter,
+  ExternalLink
 } from 'lucide-react';

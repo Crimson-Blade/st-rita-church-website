@@ -13,7 +13,7 @@ const Header: React.FC = () => {
     {
       label: 'Parish Life',
       dropdown: [
-        { path: '/mass-times', label: 'Mass Times' },
+        { path: '/mass-timings', label: 'Mass Timings' },
         { path: '/ministries', label: 'Ministries' },
         { path: '/faith-formation', label: 'Faith Formation' },
         { path: '/vocations', label: 'Vocations' },

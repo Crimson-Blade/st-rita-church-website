@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Cross, 
   Clock, 
-  Calendar, 
   MapPin, 
-  User, 
   Heart,
   Info,
   Phone,
@@ -89,7 +87,7 @@ const MassTimes: React.FC = () => {
   const displayAdorationTimes = adorationTimes.length > 0 ? adorationTimes : mockAdorationTimes;
   const displayConfessionTimes = confessionTimes.length > 0 ? confessionTimes : mockConfessionTimes;
 
-  // Group mass times by day for better organization
+  // Group mass timings by day for better organization
   const groupedMassTimes = displayMassTimes.reduce((acc, mass) => {
     if (!acc[mass.day]) {
       acc[mass.day] = [];
@@ -111,7 +109,7 @@ const MassTimes: React.FC = () => {
           <div className="text-center">
             <div className="flex items-center justify-center mb-6">
               <Cross className="h-12 w-12 text-yellow-300 mr-4" />
-              <h1 className="text-4xl lg:text-5xl font-bold">Mass Times & Schedule</h1>
+              <h1 className="text-4xl lg:text-5xl font-bold">Mass Timings</h1>
             </div>
             <p className="text-xl text-blue-100 max-w-3xl mx-auto">
               Join us for the celebration of the Eucharist. All are welcome to worship with our parish family.
@@ -138,7 +136,7 @@ const MassTimes: React.FC = () => {
                 <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white">
                   <div className="flex items-center mb-2">
                     <Cross className="h-8 w-8 text-blue-200 mr-3" />
-                    <h2 className="text-2xl font-bold">MASS TIMES</h2>
+                    <h2 className="text-2xl font-bold">MASS TIMINGS</h2>
                   </div>
                 </div>
 

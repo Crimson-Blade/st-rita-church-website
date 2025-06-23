@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import Home from './pages/Home';
@@ -9,6 +8,8 @@ import BlogPost from './pages/BlogPost';
 import Ministries from './pages/Ministries';
 import NoticeBoard from './pages/NoticeBoard';
 import MassTimes from './pages/MassTimes';
+import Events from './pages/Events';
+import EventDetail from './pages/EventDetail';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -23,10 +24,11 @@ function App() {
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/ministries" element={<Ministries />} />
           <Route path="/notice-board" element={<NoticeBoard />} />
-          <Route path="/mass-times" element={<MassTimes />} />
+          <Route path="/mass-timings" element={<MassTimes />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/events/:slug" element={<EventDetail />} />
           {/* Placeholder routes - will be implemented later */}
           <Route path="/faith-formation" element={<div className="p-8 text-center">Faith Formation - Coming Soon</div>} />
-          <Route path="/events" element={<div className="p-8 text-center">Events - Coming Soon</div>} />
           <Route path="/news" element={<div className="p-8 text-center">News - Coming Soon</div>} />
           <Route path="/vocations" element={<div className="p-8 text-center">Vocations - Coming Soon</div>} />
           <Route path="/donate" element={<div className="p-8 text-center">Donate - Coming Soon</div>} />

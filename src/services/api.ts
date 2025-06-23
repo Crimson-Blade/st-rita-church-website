@@ -144,10 +144,10 @@ export const strapiApi = {
   // Mass Times
   async getMassTimes(): Promise<MassTime[]> {
     try {
-      const response = await api.get('/mass-times?sort=day:asc');
+      const response = await api.get('/mass-timings?sort=day:asc');
       return response.data.data || [];
     } catch (error) {
-      console.error('Error fetching mass times:', error);
+      console.error('Error fetching mass timings:', error);
       return [];
     }
   },
