@@ -2,42 +2,62 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, User, ArrowRight, BookOpen, Search } from '../components/Icons';
 import { strapiApi } from '../services/api';
+import { getImageUrl } from '../utils/imageUtils';
+import Pagination from '../components/Pagination';
 import type { BlogPost } from '../types';
 
 const Blog: React.FC = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 3,
+    pageCount: 1,
+    total: 0
+  });
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   useEffect(() => {
     const fetchBlogPosts = async () => {
+      setLoading(true);
       try {
-        const data = await strapiApi.getBlogPosts();
-        setBlogPosts(data);
-        setFilteredPosts(data);
+        const response = await strapiApi.getBlogPosts(pagination.page, pagination.pageSize, debouncedSearchTerm);
+        setBlogPosts(response.data);
+        setPagination(response.meta.pagination);
       } catch (error) {
         console.error('Error fetching blog posts:', error);
+        setBlogPosts([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchBlogPosts();
-  }, []);
+  }, [pagination.page, pagination.pageSize, debouncedSearchTerm]);
 
+  // Reset to first page when search term changes
   useEffect(() => {
-    if (searchTerm) {
-      const filtered = blogPosts.filter(post =>
-        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.author.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredPosts(filtered);
-    } else {
-      setFilteredPosts(blogPosts);
-    }
-  }, [searchTerm, blogPosts]);
+    setPagination(prev => {
+      if (prev.page !== 1) {
+        return { ...prev, page: 1 };
+      }
+      return prev;
+    });
+  }, [debouncedSearchTerm]);
+
+  const handlePageChange = (newPage: number) => {
+    setPagination(prev => ({ ...prev, page: newPage }));
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -47,77 +67,9 @@ const Blog: React.FC = () => {
     });
   };
 
-  // Mock data if no blog posts from API
-  const mockBlogPosts: BlogPost[] = [
-    {
-      id: 1,
-      title: 'Preparing Our Hearts for Lent',
-      content: 'As we approach the season of Lent, it is important to prepare our hearts and minds for this sacred time of reflection, prayer, and penance...',
-      excerpt: 'Discover meaningful ways to observe Lent and grow closer to God through prayer, fasting, and almsgiving.',
-      publishedAt: '2024-02-28',
-      author: 'Fr. David Martinez',
-      slug: 'preparing-hearts-for-lent',
-      featuredImage: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800'
-    },
-    {
-      id: 2,
-      title: 'The Power of Community Prayer',
-      content: 'When we gather together in prayer, something beautiful happens. The collective voices of our parish family create a powerful bond...',
-      excerpt: 'Explore how praying together as a community strengthens our faith and deepens our relationship with God.',
-      publishedAt: '2024-02-20',
-      author: 'Fr. James Wilson',
-      slug: 'power-of-community-prayer',
-      featuredImage: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800'
-    },
-    {
-      id: 3,
-      title: 'Living the Beatitudes Today',
-      content: 'The Beatitudes offer us a roadmap for Christian living in the modern world. Each blessing shows us how to find true happiness...',
-      excerpt: 'Learn how to apply Jesus\' teachings from the Beatitudes to our daily lives and find true spiritual fulfillment.',
-      publishedAt: '2024-02-15',
-      author: 'Deacon Robert Chen',
-      slug: 'living-beatitudes-today',
-      featuredImage: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800'
-    },
-    {
-      id: 4,
-      title: 'Finding God in Daily Life',
-      content: 'God is present in every moment of our lives, but sometimes we need to slow down and pay attention to recognize His presence...',
-      excerpt: 'Practical ways to recognize God\'s presence in your everyday activities and strengthen your spiritual awareness.',
-      publishedAt: '2024-02-10',
-      author: 'Fr. David Martinez',
-      slug: 'finding-god-daily-life',
-      featuredImage: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800'
-    },
-    {
-      id: 5,
-      title: 'The Importance of Forgiveness',
-      content: 'Forgiveness is at the heart of the Christian message. Jesus taught us to forgive others as we have been forgiven...',
-      excerpt: 'Understanding the transformative power of forgiveness in our relationships and spiritual growth.',
-      publishedAt: '2024-02-05',
-      author: 'Fr. James Wilson',
-      slug: 'importance-of-forgiveness',
-      featuredImage: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800'
-    },
-    {
-      id: 6,
-      title: 'Building a Life of Service',
-      content: 'Service to others is a fundamental aspect of Christian discipleship. Through serving, we follow Christ\'s example...',
-      excerpt: 'Discover how serving others enriches our faith and creates meaningful connections in our community.',
-      publishedAt: '2024-01-30',
-      author: 'Deacon Robert Chen',
-      slug: 'building-life-of-service',
-      featuredImage: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800'
-    }
-  ];
+  const displayPosts = blogPosts;
 
-  const displayPosts = blogPosts.length > 0 ? filteredPosts : mockBlogPosts.filter(post =>
-    searchTerm ? (
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.author.toLowerCase().includes(searchTerm.toLowerCase())
-    ) : true
-  );
+
 
   return (
     <div>
@@ -188,8 +140,8 @@ const Blog: React.FC = () => {
                   <div className="relative h-48 bg-gray-200 overflow-hidden">
                     {post.featuredImage ? (
                       <img
-                        src={post.featuredImage}
-                        alt={post.title}
+                        src={getImageUrl(post.featuredImage, 'medium')}
+                        alt={post.featuredImage && typeof post.featuredImage === 'object' ? post.featuredImage.alternativeText || post.title : post.title}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -235,6 +187,16 @@ const Blog: React.FC = () => {
               <p className="text-gray-600">
                 {searchTerm ? 'Try adjusting your search terms.' : 'Check back soon for new content.'}
               </p>
+            </div>
+          )}
+
+          {/* Pagination */}
+          {pagination.pageCount > 1 && (
+            <div className="mt-12 flex justify-center">
+              <Pagination
+                pagination={pagination}
+                onPageChange={handlePageChange}
+              />
             </div>
           )}
         </div>

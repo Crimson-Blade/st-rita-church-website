@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, MapPin, Phone, Mail, Clock, ChevronDown } from 'lucide-react';
+import { Menu, X, Phone, Mail, Clock, ChevronDown } from 'lucide-react';
+import { strapiApi } from '../../services/api';
+import type { ParishInfo } from '../../types';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [parishInfo, setParishInfo] = useState<ParishInfo | null>(null);
   const location = useLocation();
+
+  useEffect(() => {
+    const fetchParishInfo = async () => {
+      const info = await strapiApi.getParishInfo();
+      setParishInfo(info);
+    };
+    fetchParishInfo();
+  }, []);
 
   const navItems = [
     { path: '/', label: 'Home' },
@@ -46,17 +57,17 @@ const Header: React.FC = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center">
                 <Clock className="h-4 w-4 mr-1" />
-                <span>Sunday Mass: 8:00 AM, 10:30 AM, 6:00 PM</span>
+                <span>Sunday Mass: {parishInfo?.sundayMass || '6:30 AM, 8:15 AM, 9:30 AM (English)'}</span>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex items-center">
                 <Phone className="h-4 w-4 mr-1" />
-                <span>+91 8788653451</span>
+                <span>{parishInfo?.officePhone || '08326638644'}</span>
               </div>
               <div className="flex items-center">
                 <Mail className="h-4 w-4 mr-1" />
-                <span>office@stritaparish.org</span>
+                <span>{parishInfo?.officeEmail || 'st.rita.maina1960@gmail.com'}</span>
               </div>
             </div>
           </div>
@@ -76,8 +87,8 @@ const Header: React.FC = () => {
               />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-blue-900">St. Rita's Church</h1>
-              <p className="text-sm text-gray-600">Catholic Church</p>
+              <h1 className="text-2xl font-bold text-blue-900">{parishInfo?.parishName || 'St. Rita\'s Church'}</h1>
+              <p className="text-sm text-gray-600">{parishInfo?.parishSubtitle || 'Catholic Church'}</p>
             </div>
           </Link>
 

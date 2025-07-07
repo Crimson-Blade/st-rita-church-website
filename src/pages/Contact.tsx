@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapPin, Phone, Mail, Clock, Send } from '../components/Icons';
 import { strapiApi } from '../services/api';
+import type { ParishInfo } from '../types';
 
 // Google Maps component
 const GoogleMap: React.FC = () => {
@@ -21,6 +22,7 @@ const GoogleMap: React.FC = () => {
 };
 
 const Contact: React.FC = () => {
+  const [parishInfo, setParishInfo] = useState<ParishInfo | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -30,6 +32,14 @@ const Contact: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    const fetchParishInfo = async () => {
+      const info = await strapiApi.getParishInfo();
+      setParishInfo(info);
+    };
+    fetchParishInfo();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -228,9 +238,7 @@ const Contact: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Visit Us</h3>
                     <p className="text-gray-600">
-                      123 Church Street<br />
-                      Maina, ST 12345<br />
-                      United States
+                      {parishInfo?.address || 'St Rita\'s Church, Maina, Curtorim, Shelvan, Goa 403709'}
                     </p>
                   </div>
                 </div>
@@ -242,8 +250,8 @@ const Contact: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Call Us</h3>
                     <p className="text-gray-600">
-                      Parish Office: +91 8788653451<br />
-                      Emergency: +91 8788653451
+                      Parish Office: {parishInfo?.officePhone || '08326638644'}<br />
+                      Emergency: {parishInfo?.parishPriestPhone || parishInfo?.officePhone || '08326638644'}
                     </p>
                   </div>
                 </div>
@@ -255,8 +263,8 @@ const Contact: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Email Us</h3>
                     <p className="text-gray-600">
-                      General: office@stritaparish.org<br />
-                      Pastor: pastor@stritaparish.org
+                      General: {parishInfo?.officeEmail || 'st.rita.maina1960@gmail.com'}<br />
+                      Pastor: {parishInfo?.parishPriestEmail || 'st.rita.maina1960@gmail.com'}
                     </p>
                   </div>
                 </div>
@@ -268,9 +276,9 @@ const Contact: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Office Hours</h3>
                     <div className="text-gray-600 space-y-1">
-                      <p>Monday - Friday: 9:00 AM - 5:00 PM</p>
-                      <p>Saturday: 9:00 AM - 1:00 PM</p>
-                      <p>Sunday: Closed</p>
+                      <p>Monday - Friday: {parishInfo?.officeWeekdayHours || '9:00 AM - 12:30 PM'}</p>
+                      <p>Saturday: {parishInfo?.officeSaturdayHours || '9:00 AM - 12:30 PM'}</p>
+                      <p>Sunday: {parishInfo?.officeSundayHours || 'Closed'}</p>
                     </div>
                   </div>
                 </div>

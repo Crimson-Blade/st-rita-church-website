@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, User, ArrowRight, BookOpen } from '../Icons';
 import { strapiApi } from '../../services/api';
+import { getImageUrl } from '../../utils/imageUtils';
 import type { BlogPost } from '../../types';
 
 const FeaturedBlogs: React.FC = () => {
@@ -11,8 +12,8 @@ const FeaturedBlogs: React.FC = () => {
   useEffect(() => {
     const fetchBlogPosts = async () => {
       try {
-        const data = await strapiApi.getBlogPosts();
-        setBlogPosts(data.slice(0, 3)); // Show only first 3 for homepage
+        const response = await strapiApi.getBlogPosts(1, 3);
+        setBlogPosts(response.data); // Show only first 3 for homepage
       } catch (error) {
         console.error('Error fetching blog posts:', error);
       } finally {
@@ -36,32 +37,122 @@ const FeaturedBlogs: React.FC = () => {
     {
       id: 1,
       title: 'Preparing Our Hearts for Lent',
-      content: 'As we approach the season of Lent, it is important to prepare our hearts and minds for this sacred time of reflection, prayer, and penance...',
+      content: [
+        {
+          type: 'paragraph',
+          children: [
+            {
+              type: 'text',
+              text: 'As we approach the season of Lent, it is important to prepare our hearts and minds for this sacred time of reflection, prayer, and penance...'
+            }
+          ]
+        }
+      ],
       excerpt: 'Discover meaningful ways to observe Lent and grow closer to God through prayer, fasting, and almsgiving.',
       publishedAt: '2024-02-28',
       author: 'Fr. David Martinez',
       slug: 'preparing-hearts-for-lent',
-      featuredImage: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800'
+      featuredImage: {
+        id: 1,
+        documentId: 'mock-featured-1',
+        name: 'lent-preparation.jpg',
+        alternativeText: 'Preparing for Lent',
+        caption: null,
+        width: 800,
+        height: 600,
+        formats: {},
+        hash: 'mock_hash_featured_1',
+        ext: '.jpg',
+        mime: 'image/jpeg',
+        size: 100000,
+        url: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800',
+        previewUrl: null,
+        provider: 'cloudinary',
+        provider_metadata: null,
+        createdAt: '2024-02-28T00:00:00.000Z',
+        updatedAt: '2024-02-28T00:00:00.000Z',
+        publishedAt: '2024-02-28T00:00:00.000Z'
+      }
     },
     {
       id: 2,
       title: 'The Power of Community Prayer',
-      content: 'When we gather together in prayer, something beautiful happens. The collective voices of our parish family create a powerful bond...',
+      content: [
+        {
+          type: 'paragraph',
+          children: [
+            {
+              type: 'text',
+              text: 'When we gather together in prayer, something beautiful happens. The collective voices of our parish family create a powerful bond...'
+            }
+          ]
+        }
+      ],
       excerpt: 'Explore how praying together as a community strengthens our faith and deepens our relationship with God.',
       publishedAt: '2024-02-20',
       author: 'Fr. James Wilson',
       slug: 'power-of-community-prayer',
-      featuredImage: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800'
+      featuredImage: {
+        id: 2,
+        documentId: 'mock-featured-2',
+        name: 'community-prayer.jpg',
+        alternativeText: 'Community Prayer',
+        caption: null,
+        width: 800,
+        height: 600,
+        formats: {},
+        hash: 'mock_hash_featured_2',
+        ext: '.jpg',
+        mime: 'image/jpeg',
+        size: 100000,
+        url: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800',
+        previewUrl: null,
+        provider: 'cloudinary',
+        provider_metadata: null,
+        createdAt: '2024-02-20T00:00:00.000Z',
+        updatedAt: '2024-02-20T00:00:00.000Z',
+        publishedAt: '2024-02-20T00:00:00.000Z'
+      }
     },
     {
       id: 3,
       title: 'Living the Beatitudes Today',
-      content: 'The Beatitudes offer us a roadmap for Christian living in the modern world. Each blessing shows us how to find true happiness...',
+      content: [
+        {
+          type: 'paragraph',
+          children: [
+            {
+              type: 'text',
+              text: 'The Beatitudes offer us a roadmap for Christian living in the modern world. Each blessing shows us how to find true happiness...'
+            }
+          ]
+        }
+      ],
       excerpt: 'Learn how to apply Jesus\' teachings from the Beatitudes to our daily lives and find true spiritual fulfillment.',
       publishedAt: '2024-02-15',
       author: 'Deacon Robert Chen',
       slug: 'living-beatitudes-today',
-      featuredImage: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800'
+      featuredImage: {
+        id: 3,
+        documentId: 'mock-featured-3',
+        name: 'beatitudes.jpg',
+        alternativeText: 'Living the Beatitudes',
+        caption: null,
+        width: 800,
+        height: 600,
+        formats: {},
+        hash: 'mock_hash_featured_3',
+        ext: '.jpg',
+        mime: 'image/jpeg',
+        size: 100000,
+        url: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800',
+        previewUrl: null,
+        provider: 'cloudinary',
+        provider_metadata: null,
+        createdAt: '2024-02-15T00:00:00.000Z',
+        updatedAt: '2024-02-15T00:00:00.000Z',
+        publishedAt: '2024-02-15T00:00:00.000Z'
+      }
     }
   ];
 
@@ -121,8 +212,8 @@ const FeaturedBlogs: React.FC = () => {
               <div className="relative h-48 bg-gray-200 overflow-hidden">
                 {post.featuredImage ? (
                   <img
-                    src={post.featuredImage}
-                    alt={post.title}
+                    src={getImageUrl(post.featuredImage, 'medium')}
+                    alt={post.featuredImage && typeof post.featuredImage === 'object' ? post.featuredImage.alternativeText || post.title : post.title}
                     className="w-full h-full object-cover"
                   />
                 ) : (

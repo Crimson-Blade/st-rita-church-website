@@ -7,7 +7,11 @@ import type {
   AdorationTime, 
   ConfessionTime, 
   Priest, 
-  NoticeBoardItem 
+  NoticeBoardItem,
+  PaginatedResponse,
+  EventRegistration,
+  RegistrationFormData,
+  ParishInfo,
 } from '../types';
 
 const API_BASE_URL = (import.meta.env.VITE_STRAPI_URL?.replace(/\/+$/, '') || 'http://localhost:1337') + '/api';
@@ -61,13 +65,54 @@ const sanitizeNoticeBoardItem = (item: NoticeBoardItem): NoticeBoardItem => {
 
 export const strapiApi = {
   // Notice Board Items (includes announcements, images, and posters)
-  async getNoticeBoardItems(): Promise<NoticeBoardItem[]> {
+  async getNoticeBoardItems(page: number = 1, pageSize: number = 12, search?: string): Promise<PaginatedResponse<NoticeBoardItem>> {
     try {
-      const response = await api.get('/notice-board-items?sort=publishedAt:desc&populate=image');
+      let url = `/notice-board-items?sort=publishedAt:desc&populate=image&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+      
+      // Add search filter if provided
+      if (search && search.trim()) {
+        const searchQuery = encodeURIComponent(search.trim());
+        url += `&filters[$or][0][title][$containsi]=${searchQuery}&filters[$or][1][content][$containsi]=${searchQuery}`;
+      }
+      
+      const response = await api.get(url);
       const items = response.data.data || [];
-      return items.map(sanitizeNoticeBoardItem);
+      const meta = response.data.meta || {
+        pagination: {
+          page: 1,
+          pageSize: pageSize,
+          pageCount: 1,
+          total: items.length
+        }
+      };
+      
+      return {
+        data: items.map(sanitizeNoticeBoardItem),
+        meta
+      };
     } catch (error) {
       console.error('Error fetching notice board items:', error);
+      return {
+        data: [],
+        meta: {
+          pagination: {
+            page: 1,
+            pageSize: pageSize,
+            pageCount: 0,
+            total: 0
+          }
+        }
+      };
+    }
+  },
+
+  // Legacy method for backward compatibility
+  async getAllNoticeBoardItems(): Promise<NoticeBoardItem[]> {
+    try {
+      const response = await this.getNoticeBoardItems(1, 1000); // Get all items
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching all notice board items:', error);
       return [];
     }
   },
@@ -84,19 +129,61 @@ export const strapiApi = {
   },
 
   // Blog Posts
-  async getBlogPosts(): Promise<BlogPost[]> {
+  async getBlogPosts(page: number = 1, pageSize: number = 12, search?: string): Promise<PaginatedResponse<BlogPost>> {
     try {
-      const response = await api.get('/blog-posts?sort=publishedAt:desc');
-      return response.data.data || [];
+      let url = `/blog-posts?sort=publishedAt:desc&populate[0]=featuredImage&populate[1]=gallery&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+      
+      // Add search filter if provided
+      if (search && search.trim()) {
+        const searchQuery = encodeURIComponent(search.trim());
+        url += `&filters[$or][0][title][$containsi]=${searchQuery}&filters[$or][1][excerpt][$containsi]=${searchQuery}&filters[$or][2][author][$containsi]=${searchQuery}`;
+      }
+      
+      const response = await api.get(url);
+      const items = response.data.data || [];
+      const meta = response.data.meta || {
+        pagination: {
+          page: 1,
+          pageSize: pageSize,
+          pageCount: 1,
+          total: items.length
+        }
+      };
+      
+      return {
+        data: items,
+        meta
+      };
     } catch (error) {
       console.error('Error fetching blog posts:', error);
+      return {
+        data: [],
+        meta: {
+          pagination: {
+            page: 1,
+            pageSize: pageSize,
+            pageCount: 0,
+            total: 0
+          }
+        }
+      };
+    }
+  },
+
+  // Legacy method for backward compatibility
+  async getAllBlogPosts(): Promise<BlogPost[]> {
+    try {
+      const response = await this.getBlogPosts(1, 1000); // Get all items
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching all blog posts:', error);
       return [];
     }
   },
 
   async getBlogPost(slug: string): Promise<BlogPost | null> {
     try {
-      const response = await api.get(`/blog-posts?filters[slug][$eq]=${slug}`);
+      const response = await api.get(`/blog-posts?filters[slug][$eq]=${slug}&populate[0]=featuredImage&populate[1]=gallery`);
       return response.data.data[0] || null;
     } catch (error) {
       console.error('Error fetching blog post:', error);
@@ -104,7 +191,6 @@ export const strapiApi = {
     }
   },
 
-  // Events
   async getEvents(): Promise<Event[]> {
     try {
       const response = await api.get('/events?sort=date:asc');
@@ -115,7 +201,130 @@ export const strapiApi = {
     }
   },
 
-  async registerForEvent(eventId: number, userData: any): Promise<boolean> {
+  async getEvent(eventId: number): Promise<Event | null> {
+    try {
+      const response = await api.get(`/events/${eventId}`);
+      return response.data.data || null;
+    } catch (error) {
+      console.error('Error fetching event:', error);
+      return null;
+    }
+  },
+
+  async registerForEvent(eventId: number, registrationData: RegistrationFormData): Promise<EventRegistration | null> {
+    try {
+      // First, check if event exists and has capacity
+      const event = await this.getEvent(eventId);
+      if (!event) {
+        throw new Error('Event not found');
+      }
+
+      if (event.maxAttendees && event.currentAttendees + registrationData.attendeeCount > event.maxAttendees) {
+        throw new Error('Event is fully booked');
+      }
+
+      // Create the registration
+      const response = await api.post('/event-registrations', {
+        data: {
+          name: registrationData.name,
+          email: registrationData.email,
+          phone: registrationData.phone,
+          attendeeCount: registrationData.attendeeCount,
+          additionalInfo: registrationData.additionalInfo || '',
+          event: eventId,
+          status: 'confirmed',
+        },
+      });
+
+      const registration = response.data.data;
+
+      // Update event attendee count
+      await this.updateEventAttendeeCount(eventId, registrationData.attendeeCount);
+
+      return registration;
+    } catch (error) {
+      console.error('Error registering for event:', error);
+      throw error;
+    }
+  },
+
+  async updateEventAttendeeCount(eventId: number, additionalAttendees: number): Promise<boolean> {
+    try {
+      // Get current event data
+      const event = await this.getEvent(eventId);
+      if (!event) {
+        return false;
+      }
+
+      const newCount = event.currentAttendees + additionalAttendees;
+
+      const response = await api.put(`/events/${eventId}`, {
+        data: {
+          currentAttendees: newCount,
+        },
+      });
+
+      return response.status === 200;
+    } catch (error) {
+      console.error('Error updating attendee count:', error);
+      return false;
+    }
+  },
+
+  async getEventRegistrations(eventId: number): Promise<EventRegistration[]> {
+    try {
+      const response = await api.get(
+        `/event-registrations?filters[event][id][$eq]=${eventId}&populate[event]=*&sort=createdAt:desc`
+      );
+      
+      return response.data.data || [];
+    } catch (error) {
+      console.error('Error fetching event registrations:', error);
+      return [];
+    }
+  },
+
+  async getRegistration(registrationId: number): Promise<EventRegistration | null> {
+    try {
+      const response = await api.get(`/event-registrations/${registrationId}?populate[event]=*`);
+      return response.data.data || null;
+    } catch (error) {
+      console.error('Error fetching registration:', error);
+      return null;
+    }
+  },
+
+  async cancelRegistration(registrationId: number): Promise<boolean> {
+    try {
+      // Get registration to get attendee count for updating event
+      const registration = await this.getRegistration(registrationId);
+      if (!registration) {
+        return false;
+      }
+
+      // Update registration status
+      const response = await api.put(`/event-registrations/${registrationId}`, {
+        data: {
+          status: 'cancelled',
+        },
+      });
+
+      if (response.status === 200) {
+        // Update event attendee count (subtract the cancelled attendees)
+        const eventId = typeof registration.event === 'object' ? registration.event.id : registration.event;
+        await this.updateEventAttendeeCount(eventId, -registration.attendeeCount);
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('Error cancelling registration:', error);
+      return false;
+    }
+  },
+
+  // Legacy method for backward compatibility - now properly typed
+  async registerForEvent_legacy(eventId: number, userData: Record<string, unknown>): Promise<boolean> {
     try {
       await api.post('/event-registrations', {
         data: {
@@ -186,7 +395,7 @@ export const strapiApi = {
   },
 
   // Contact Form
-  async submitContactForm(formData: any): Promise<boolean> {
+  async submitContactForm(formData: Record<string, unknown>): Promise<boolean> {
     try {
       await api.post('/contact-submissions', {
         data: formData,
@@ -199,7 +408,7 @@ export const strapiApi = {
   },
 
   // Feedback Form
-  async submitFeedback(feedbackData: any): Promise<boolean> {
+  async submitFeedback(feedbackData: Record<string, unknown>): Promise<boolean> {
     try {
       await api.post('/feedback-submissions', {
         data: feedbackData,
@@ -208,6 +417,17 @@ export const strapiApi = {
     } catch (error) {
       console.error('Error submitting feedback:', error);
       return false;
+    }
+  },
+
+  // Parish Info
+  async getParishInfo(): Promise<ParishInfo | null> {
+    try {
+      const response = await api.get('/parish-info');
+      return response.data.data || null;
+    } catch (error) {
+      console.error('Error fetching parish info:', error);
+      return null;
     }
   },
 };

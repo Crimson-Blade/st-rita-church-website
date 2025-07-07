@@ -22,5 +22,7 @@ export {
   Image as ImageIcon,
   Home,
   Filter,
-  ExternalLink
+  ExternalLink,
+  Download,
+  Trash2
 } from 'lucide-react';

@@ -19,61 +19,66 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { strapiApi } from '../services/api';
-import type { NoticeBoardItem, StrapiImage } from '../types';
+import { getItemImageUrl } from '../utils/imageUtils';
+import Pagination from '../components/Pagination';
+import type { NoticeBoardItem } from '../types';
 
 const NoticeBoard: React.FC = () => {
   const [noticeBoardItems, setNoticeBoardItems] = useState<NoticeBoardItem[]>([]);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 12,
+    pageCount: 1,
+    total: 0
+  });
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [filterType, setFilterType] = useState<'all' | 'text' | 'image' | 'poster'>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [selectedItem, setSelectedItem] = useState<NoticeBoardItem | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Utility function to get the appropriate image URL from Strapi image data
-  const getImageUrl = (image: StrapiImage | undefined, size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original' = 'medium'): string | undefined => {
-    if (!image) return undefined;
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
 
-    const baseUrl = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
-
-    let imageUrl: string;
-    if (size === 'original') {
-      imageUrl = image.url;
-    } else {
-      imageUrl = image.formats?.[size]?.url || image.url;
-    }
-
-    // If the URL is relative, prepend the base URL
-    if (imageUrl.startsWith('/')) {
-      return `${baseUrl}${imageUrl}`;
-    }
-
-    return imageUrl;
-  };
-
-  // Get image URL for an item (handles both Strapi format and legacy imageUrl)
-  const getItemImageUrl = (item: NoticeBoardItem, size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original' = 'medium'): string | undefined => {
-    if (item.image) {
-      return getImageUrl(item.image, size);
-    }
-    return item.imageUrl; // Fallback for mock data
-  };
-
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
-        const noticeBoardData = await strapiApi.getNoticeBoardItems();
-        setNoticeBoardItems(noticeBoardData);
+        const response = await strapiApi.getNoticeBoardItems(pagination.page, pagination.pageSize, debouncedSearchTerm);
+        setNoticeBoardItems(response.data);
+        setPagination(response.meta.pagination);
       } catch (error) {
         console.error('Error fetching notice board data:', error);
+        setNoticeBoardItems([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [pagination.page, pagination.pageSize, debouncedSearchTerm]);
+
+  // Reset to first page when search term or filter changes
+  useEffect(() => {
+    setPagination(prev => {
+      if (prev.page !== 1) {
+        return { ...prev, page: 1 };
+      }
+      return prev;
+    });
+  }, [debouncedSearchTerm, filterType]);
+
+  const handlePageChange = (newPage: number) => {
+    setPagination(prev => ({ ...prev, page: newPage }));
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -83,92 +88,9 @@ const NoticeBoard: React.FC = () => {
     });
   };
 
-  // Mock data for demonstration
-  const mockNoticeBoardItems: NoticeBoardItem[] = [
-    {
-      id: 1,
-      type: 'text',
-      title: 'Easter Sunday Services',
-      content: 'Join us for our special Easter Sunday celebration with services at 8:00 AM, 10:30 AM, and 6:00 PM. We will have special music, beautiful decorations, and a joyful celebration of Christ\'s resurrection. All are welcome to participate in this most holy day of the Christian calendar.',
-      publishedAt: '2024-03-20',
-      urgent: true,
-      slug: 'easter-sunday-services'
-    },
-    {
-      id: 2,
-      type: 'text',
-      title: 'Food Drive Collection',
-      content: 'Help us support local families in need by donating non-perishable food items. Drop off donations in the church lobby during regular hours. Items most needed include canned goods, pasta, rice, and baby food. Thank you for your generosity.',
-      publishedAt: '2024-03-18',
-      urgent: false,
-      slug: 'food-drive-collection'
-    },
-    {
-      id: 3,
-      type: 'poster',
-      title: 'Lenten Prayer Schedule',
-      imageUrl: 'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=800',
-      publishedAt: '2024-03-15',
-      slug: 'lenten-prayer-schedule',
-      content: 'Special prayer times and devotions during the holy season of Lent'
-    },
-    {
-      id: 4,
-      type: 'image',
-      title: 'Parish Picnic Photos',
-      imageUrl: 'https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800',
-      publishedAt: '2024-03-12',
-      slug: 'parish-picnic-photos',
-      content: 'Beautiful moments captured from our recent parish community picnic'
-    },
-    {
-      id: 5,
-      type: 'text',
-      title: 'Youth Group Meeting',
-      content: 'All high school students are invited to join our youth group meeting this Friday at 7:00 PM in the parish hall. We will discuss upcoming service projects and plan our spring retreat. Pizza will be provided!',
-      publishedAt: '2024-03-10',
-      urgent: false,
-      slug: 'youth-group-meeting'
-    },
-    {
-      id: 6,
-      type: 'poster',
-      title: 'First Communion Registration',
-      imageUrl: 'https://images.pexels.com/photos/208315/pexels-photo-208315.jpeg?auto=compress&cs=tinysrgb&w=800',
-      publishedAt: '2024-03-08',
-      slug: 'first-communion-registration',
-      content: 'Registration now open for First Communion classes starting in September'
-    },
-    {
-      id: 7,
-      type: 'image',
-      title: 'Church Renovation Progress',
-      imageUrl: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800',
-      publishedAt: '2024-03-05',
-      slug: 'church-renovation-progress',
-      content: 'Latest updates on our ongoing church renovation and beautification project'
-    },
-    {
-      id: 8,
-      type: 'text',
-      title: 'New Parish Office Hours',
-      content: 'Please note our updated parish office hours: Monday-Friday 9:00 AM to 5:00 PM, Saturday 9:00 AM to 1:00 PM. The office will be closed on Sundays. For emergencies, please call our emergency line.',
-      publishedAt: '2024-03-01',
-      urgent: false,
-      slug: 'new-parish-office-hours'
-    }
-  ];
-
-  const displayItems = noticeBoardItems.length > 0 ? noticeBoardItems : mockNoticeBoardItems;
-
-  // Filter and search
-  const filteredItems = displayItems.filter(item => {
-    const matchesType = filterType === 'all' || item.type === filterType;
-    const matchesSearch = searchTerm === '' ||
-      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (item.content && item.content.toLowerCase().includes(searchTerm.toLowerCase()));
-
-    return matchesType && matchesSearch;
+  // Client-side filtering for type only - search is handled server-side
+  const filteredItems = noticeBoardItems.filter(item => {
+    return filterType === 'all' || item.type === filterType;
   });
 
   const openModal = (item: NoticeBoardItem) => {
@@ -406,6 +328,16 @@ const NoticeBoard: React.FC = () => {
                   ? 'Try adjusting your search or filter criteria.'
                   : 'Check back soon for new notices and updates.'}
               </p>
+            </div>
+          )}
+
+          {/* Pagination */}
+          {pagination.pageCount > 1 && (
+            <div className="mt-12 flex justify-center">
+              <Pagination
+                pagination={pagination}
+                onPageChange={handlePageChange}
+              />
             </div>
           )}
         </div>

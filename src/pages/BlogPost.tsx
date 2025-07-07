@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Calendar, User, ArrowLeft, Share2, BookOpen, ImageIcon } from '../components/Icons';
 import { strapiApi } from '../services/api';
 import { CustomBlocksRenderer } from '../components/BlocksRenderer';
+import { getImageUrl } from '../utils/imageUtils';
 import type { BlogPost } from '../types';
 
 const BlogPostPage: React.FC = () => {
@@ -215,11 +216,91 @@ const BlogPostPage: React.FC = () => {
     publishedAt: '2024-02-28',
     author: 'Fr. David Martinez',
     slug: 'preparing-hearts-for-lent',
-    featuredImage: 'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    featuredImage: {
+      id: 1,
+      documentId: 'mock-1',
+      name: 'lent-preparation.jpg',
+      alternativeText: 'Preparing Hearts for Lent',
+      caption: null,
+      width: 1200,
+      height: 800,
+      formats: {},
+      hash: 'mock_hash_1',
+      ext: '.jpg',
+      mime: 'image/jpeg',
+      size: 150000,
+      url: 'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      previewUrl: null,
+      provider: 'cloudinary',
+      provider_metadata: null,
+      createdAt: '2024-02-28T00:00:00.000Z',
+      updatedAt: '2024-02-28T00:00:00.000Z',
+      publishedAt: '2024-02-28T00:00:00.000Z'
+    },
     gallery: [
-      'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/208315/pexels-photo-208315.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=800'
+      {
+        id: 2,
+        documentId: 'mock-2',
+        name: 'gallery-1.jpg',
+        alternativeText: 'Gallery image 1',
+        caption: null,
+        width: 800,
+        height: 600,
+        formats: {},
+        hash: 'mock_hash_2',
+        ext: '.jpg',
+        mime: 'image/jpeg',
+        size: 120000,
+        url: 'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=800',
+        previewUrl: null,
+        provider: 'cloudinary',
+        provider_metadata: null,
+        createdAt: '2024-02-28T00:00:00.000Z',
+        updatedAt: '2024-02-28T00:00:00.000Z',
+        publishedAt: '2024-02-28T00:00:00.000Z'
+      },
+      {
+        id: 3,
+        documentId: 'mock-3',
+        name: 'gallery-2.jpg',
+        alternativeText: 'Gallery image 2',
+        caption: null,
+        width: 800,
+        height: 600,
+        formats: {},
+        hash: 'mock_hash_3',
+        ext: '.jpg',
+        mime: 'image/jpeg',
+        size: 110000,
+        url: 'https://images.pexels.com/photos/208315/pexels-photo-208315.jpeg?auto=compress&cs=tinysrgb&w=800',
+        previewUrl: null,
+        provider: 'cloudinary',
+        provider_metadata: null,
+        createdAt: '2024-02-28T00:00:00.000Z',
+        updatedAt: '2024-02-28T00:00:00.000Z',
+        publishedAt: '2024-02-28T00:00:00.000Z'
+      },
+      {
+        id: 4,
+        documentId: 'mock-4',
+        name: 'gallery-3.jpg',
+        alternativeText: 'Gallery image 3',
+        caption: null,
+        width: 800,
+        height: 600,
+        formats: {},
+        hash: 'mock_hash_4',
+        ext: '.jpg',
+        mime: 'image/jpeg',
+        size: 125000,
+        url: 'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=800',
+        previewUrl: null,
+        provider: 'cloudinary',
+        provider_metadata: null,
+        createdAt: '2024-02-28T00:00:00.000Z',
+        updatedAt: '2024-02-28T00:00:00.000Z',
+        publishedAt: '2024-02-28T00:00:00.000Z'
+      }
     ]
   };
 
@@ -244,7 +325,7 @@ const BlogPostPage: React.FC = () => {
       }
     } catch (error) {
       // Handle user cancellation or other errors
-      if (error.name !== 'AbortError') {
+      if (error instanceof Error && error.name !== 'AbortError') {
         showToast('Failed to share. Please try again.', 'error');
       }
     }
@@ -352,8 +433,8 @@ const BlogPostPage: React.FC = () => {
           {displayPost.featuredImage && (
             <div className="mb-8">
               <img
-                src={displayPost.featuredImage}
-                alt={displayPost.title}
+                src={getImageUrl(displayPost.featuredImage, 'large') || getImageUrl(displayPost.featuredImage, 'original')}
+                alt={displayPost.featuredImage.alternativeText || displayPost.title}
                 className="w-full h-96 object-cover rounded-lg shadow-lg"
               />
             </div>
@@ -379,11 +460,11 @@ const BlogPostPage: React.FC = () => {
                   <div
                     key={index}
                     className="relative cursor-pointer group"
-                    onClick={() => setSelectedImage(image)}
+                    onClick={() => setSelectedImage(getImageUrl(image, 'large') || getImageUrl(image, 'original') || '')}
                   >
                     <img
-                      src={image}
-                      alt={`Gallery image ${index + 1}`}
+                      src={getImageUrl(image, 'medium') || getImageUrl(image, 'original')}
+                      alt={image.alternativeText || `Gallery image ${index + 1}`}
                       className="w-full h-48 object-cover rounded-lg transition-transform duration-200 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-200 rounded-lg"></div>

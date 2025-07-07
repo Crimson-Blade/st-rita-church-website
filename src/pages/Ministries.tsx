@@ -1,31 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Heart, 
-  Users, 
-  BookOpen, 
-  Music, 
-  Baby, 
-  GraduationCap,
-  Utensils,
-  HandHeart,
-  Cross,
-  Globe,
-  Calendar,
-  Mail,
-  Phone,
-  ArrowRight,
-  UserPlus,
-  Clock,
-  MapPin
+  Users, BookOpen, HandHeart, Heart, GraduationCap, 
+  UserPlus, Phone, ArrowRight, Cross, Clock, Calendar, Mail
 } from 'lucide-react';
 import { strapiApi } from '../services/api';
-import type { Ministry } from '../types';
+import type { Ministry, ParishInfo } from '../types';
 
 const Ministries: React.FC = () => {
   const [ministries, setMinistries] = useState<Ministry[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [parishInfo, setParishInfo] = useState<ParishInfo | null>(null);
 
   useEffect(() => {
     const fetchMinistries = async () => {
@@ -39,7 +25,17 @@ const Ministries: React.FC = () => {
       }
     };
 
+    const fetchParishInfo = async () => {
+      try {
+        const info = await strapiApi.getParishInfo();
+        setParishInfo(info);
+      } catch (error) {
+        console.error('Error fetching parish info:', error);
+      }
+    };
+
     fetchMinistries();
+    fetchParishInfo();
   }, []);
 
   // Comprehensive mock data for Catholic parish ministries
@@ -681,11 +677,11 @@ const Ministries: React.FC = () => {
               Join a Ministry Today
             </Link>
             <a
-              href="tel:+918788653451"
+              href={`tel:${parishInfo?.officePhone || '08326638644'}`}
               className="border-2 border-white hover:bg-white hover:text-blue-900 px-8 py-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center"
             >
               <Phone className="h-5 w-5 mr-2" />
-              Call Us: +91 8788653451
+              Call Us: {parishInfo?.officePhone || '08326638644'}
             </a>
           </div>
         </div>

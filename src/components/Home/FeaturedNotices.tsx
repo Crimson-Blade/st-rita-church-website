@@ -2,36 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Bell, Clock, ArrowRight, AlertTriangle, Image as ImageIcon, Eye } from 'lucide-react';
 import { strapiApi } from '../../services/api';
-import type { NoticeBoardItem, StrapiImage } from '../../types';
-
-// Utility to get image URL from Strapi image object or fallback to imageUrl
-const getImageUrl = (
-  image: StrapiImage | undefined,
-  size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original' = 'medium'
-): string | undefined => {
-  if (!image) return undefined;
-  const baseUrl = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
-  let imageUrl: string;
-  if (size === 'original') {
-    imageUrl = image.url;
-  } else {
-    imageUrl = image.formats?.[size]?.url || image.url;
-  }
-  if (imageUrl.startsWith('/')) {
-    return `${baseUrl}${imageUrl}`;
-  }
-  return imageUrl;
-};
-
-const getItemImageUrl = (
-  item: NoticeBoardItem,
-  size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original' = 'medium'
-): string | undefined => {
-  if (item.image) {
-    return getImageUrl(item.image, size);
-  }
-  return item.imageUrl;
-};
+import { getItemImageUrl } from '../../utils/imageUtils';
+import type { NoticeBoardItem } from '../../types';
 
 const FeaturedNotices: React.FC = () => {
   const [notices, setNotices] = useState<NoticeBoardItem[]>([]);
@@ -40,8 +12,8 @@ const FeaturedNotices: React.FC = () => {
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        const data = await strapiApi.getNoticeBoardItems();
-        setNotices(data.slice(0, 3)); // Show only first 3
+        const response = await strapiApi.getNoticeBoardItems(1, 3);
+        setNotices(response.data); // Show only first 3
       } catch (error) {
         console.error('Error fetching notices:', error);
       } finally {

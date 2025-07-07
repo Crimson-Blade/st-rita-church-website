@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube } from '../Icons';
+import { MapPin, Phone, Mail, Facebook, Instagram, Youtube } from '../Icons';
+import { strapiApi } from '../../services/api';
+import type { ParishInfo } from '../../types';
 
 const Footer: React.FC = () => {
+  const [parishInfo, setParishInfo] = useState<ParishInfo | null>(null);
+
+  useEffect(() => {
+    const fetchParishInfo = async () => {
+      const info = await strapiApi.getParishInfo();
+      setParishInfo(info);
+    };
+    fetchParishInfo();
+  }, []);
+
   return (
     <footer className="bg-blue-900 text-white">
       <div className="container mx-auto px-4 py-12">
@@ -18,8 +30,8 @@ const Footer: React.FC = () => {
               />
             </div>
               <div>
-                <h3 className="text-xl font-bold">St. Rita's Parish</h3>
-                <p className="text-sm text-blue-200">Catholic Church</p>
+                <h3 className="text-xl font-bold">{parishInfo?.parishName || 'St. Rita\'s Parish'}</h3>
+                <p className="text-sm text-blue-200">{parishInfo?.parishSubtitle || 'Catholic Church'}</p>
               </div>
             </div>
             <p className="text-blue-200 text-sm leading-relaxed">
@@ -35,17 +47,16 @@ const Footer: React.FC = () => {
               <div className="flex items-center">
                 <MapPin className="h-4 w-4 mr-2 text-blue-300" />
                 <span className="text-sm text-blue-200">
-                  123 Church Street<br />
-                  Maina, ST 12345
+                  {parishInfo?.address || 'St Rita\'s Church, Maina, Curtorim, Shelvan, Goa 403709'}
                 </span>
               </div>
               <div className="flex items-center">
                 <Phone className="h-4 w-4 mr-2 text-blue-300" />
-                <span className="text-sm text-blue-200">+91 8788653451</span>
+                <span className="text-sm text-blue-200">{parishInfo?.officePhone || '08326638644'}</span>
               </div>
               <div className="flex items-center">
                 <Mail className="h-4 w-4 mr-2 text-blue-300" />
-                <span className="text-sm text-blue-200">office@stritaparish.org</span>
+                <span className="text-sm text-blue-200">{parishInfo?.officeEmail || 'st.rita.maina1960@gmail.com'}</span>
               </div>
             </div>
           </div>
@@ -56,16 +67,22 @@ const Footer: React.FC = () => {
             <div className="space-y-2 text-sm text-blue-200">
               <div className="flex justify-between">
                 <span>Sunday:</span>
-                <span>8:00 AM, 10:30 AM, 6:00 PM</span>
+                <span>{parishInfo?.sundayMass || '6:30 AM, 8:15 AM, 9:30 AM (English)'}</span>
               </div>
               <div className="flex justify-between">
                 <span>Weekdays:</span>
-                <span>7:00 AM, 12:10 PM</span>
+                <span>{parishInfo?.weekdayMass || '6:45 AM'}</span>
               </div>
               <div className="flex justify-between">
                 <span>Saturday:</span>
-                <span>8:00 AM, 5:30 PM</span>
+                <span>{parishInfo?.saturdayMass || '6:00 PM'}</span>
               </div>
+              {parishInfo?.confessionTimings && (
+                <div className="flex justify-between">
+                  <span>Confession:</span>
+                  <span>{parishInfo.confessionTimings}</span>
+                </div>
+              )}
               <div className="mt-3">
                 <Link
                   to="/mass-timings"
@@ -119,7 +136,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-blue-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-sm text-blue-200 mb-4 md:mb-0">
-              <div>© {new Date().getFullYear()} St. Rita's Parish. All rights reserved.</div>
+              <div>© {new Date().getFullYear()} {parishInfo?.parishName || 'St. Rita\'s Parish'}. All rights reserved.</div>
               <div className="text-xs text-blue-300 mt-1">
                 Made with ❤️ by{' '}
                 <a

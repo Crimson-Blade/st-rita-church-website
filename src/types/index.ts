@@ -8,8 +8,8 @@ export interface BlogPost {
   publishedAt: string;
   author: string;
   slug: string;
-  featuredImage?: string;
-  gallery?: string[];
+  featuredImage?: StrapiImage;
+  gallery?: StrapiImage[];
 }
 
 export interface Event {
@@ -23,6 +23,28 @@ export interface Event {
   maxAttendees?: number;
   currentAttendees: number;
   slug: string;
+}
+
+export interface EventRegistration {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  attendeeCount: number;
+  additionalInfo?: string;
+  event: Event | number; // Can be populated event or just ID
+  registrationDate: string;
+  status: 'confirmed' | 'pending' | 'cancelled';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RegistrationFormData {
+  name: string;
+  email: string;
+  phone: string;
+  attendeeCount: number;
+  additionalInfo?: string;
 }
 
 export interface Ministry {
@@ -131,4 +153,36 @@ export interface NoticeBoardItem {
   publishedAt: string;
   urgent?: boolean;
   slug: string;
+}
+
+export interface PaginationMeta {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    pagination: PaginationMeta;
+  };
+}
+
+export interface ParishInfo {
+  id: number;
+  parishName: string;
+  parishSubtitle: string;
+  officePhone: string;
+  parishPriestPhone?: string;
+  officeEmail: string;
+  parishPriestEmail?: string;
+  address: string;
+  officeWeekdayHours: string;
+  officeSaturdayHours: string;
+  officeSundayHours: string;
+  sundayMass: string;
+  weekdayMass: string;
+  saturdayMass: string;
+  confessionTimings?: string;
 }

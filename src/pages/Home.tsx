@@ -3,6 +3,7 @@ import Hero from '../components/Home/Hero';
 import FeaturedNotices from '../components/Home/FeaturedNotices';
 import FeaturedBlogs from '../components/Home/FeaturedBlogs';
 import UpcomingEvents from '../components/Home/UpcomingEvents';
+import OurClergy from '../components/Home/OurClergy';
 import QuickActions from '../components/Home/QuickActions';
 
 const Home: React.FC = () => {
@@ -12,6 +13,7 @@ const Home: React.FC = () => {
       <FeaturedNotices />
       <FeaturedBlogs />
       <UpcomingEvents />
+      <OurClergy />
       <QuickActions />
     </div>
   );

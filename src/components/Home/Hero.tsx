@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Users, Heart } from 'lucide-react';
+import { strapiApi } from '../../services/api';
+import type { ParishInfo } from '../../types';
 
 const Hero: React.FC = () => {
+  const [parishInfo, setParishInfo] = useState<ParishInfo | null>(null);
+
+  useEffect(() => {
+    const fetchParishInfo = async () => {
+      const info = await strapiApi.getParishInfo();
+      setParishInfo(info);
+    };
+    fetchParishInfo();
+  }, []);
+
   return (
     <div 
       className="relative bg-gradient-to-r from-blue-900/80 via-blue-800/80 to-blue-900/80 text-white"
@@ -22,7 +34,7 @@ const Hero: React.FC = () => {
           <div>
             <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
               Welcome to{' '}
-              <span className="text-yellow-300">St. Rita's Church</span>
+              <span className="text-yellow-300">{parishInfo?.parishName || 'St. Rita\'s Church'}</span>
             </h1>
             <p className="text-xl mb-8 text-blue-100 leading-relaxed">
               A Catholic community where faith comes alive through worship, service, 

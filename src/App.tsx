@@ -10,6 +10,8 @@ import NoticeBoard from './pages/NoticeBoard';
 import MassTimes from './pages/MassTimes';
 import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
+// import RegistrationDemo from './pages/RegistrationDemo';
+// import AdminRegistrations from './pages/AdminRegistrations';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -27,6 +29,8 @@ function App() {
           <Route path="/mass-timings" element={<MassTimes />} />
           <Route path="/events" element={<Events />} />
           <Route path="/events/:slug" element={<EventDetail />} />
+          {/* <Route path="/registration-demo" element={<RegistrationDemo />} /> */}
+          {/* <Route path="/admin/registrations" element={<AdminRegistrations />} /> */}
           {/* Placeholder routes - will be implemented later */}
           <Route path="/faith-formation" element={<div className="p-8 text-center">Faith Formation - Coming Soon</div>} />
           <Route path="/news" element={<div className="p-8 text-center">News - Coming Soon</div>} />

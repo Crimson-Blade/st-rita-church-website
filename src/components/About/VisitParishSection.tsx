@@ -1,7 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Cross } from '../Icons';
+import { strapiApi } from '../../services/api';
+import type { ParishInfo } from '../../types';
 
 const VisitParishSection: React.FC = () => {
+  const [parishInfo, setParishInfo] = useState<ParishInfo | null>(null);
+
+  useEffect(() => {
+    const fetchParishInfo = async () => {
+      const info = await strapiApi.getParishInfo();
+      setParishInfo(info);
+    };
+    fetchParishInfo();
+  }, []);
+
   return (
     <section 
       className="py-20 relative text-white"
@@ -62,9 +74,9 @@ const VisitParishSection: React.FC = () => {
                 welcoming community, Saint Rita's Parish welcomes you with open arms.
               </p>
               <div className="space-y-4">
-                <p className="text-amber-200"><strong>Weekend Masses:</strong> Saturday 5:30 PM, Sunday 8:00 AM, 10:30 AM, 6:00 PM</p>
-                <p className="text-amber-200"><strong>Daily Mass:</strong> Monday-Friday 8:00 AM</p>
-                <p className="text-amber-200"><strong>Confession:</strong> Saturday 4:00-5:00 PM or by appointment</p>
+                <p className="text-amber-200"><strong>Weekend Masses:</strong> {parishInfo?.saturdayMass && parishInfo?.sundayMass ? `Saturday ${parishInfo.saturdayMass}, Sunday ${parishInfo.sundayMass}` : 'Saturday 6:00 PM, Sunday 6:30 AM, 8:15 AM, 9:30 AM (English)'}</p>
+                <p className="text-amber-200"><strong>Daily Mass:</strong> {parishInfo?.weekdayMass || '6:45 AM'}</p>
+                <p className="text-amber-200"><strong>Confession:</strong> {parishInfo?.confessionTimings || 'Daily 6:30 AM (Except Sundays)'}</p>
               </div>
             </div>
             

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, Clock, MapPin, Users, ArrowLeft, Mail, Phone } from '../components/Icons';
 import { strapiApi } from '../services/api';
-import type { Event } from '../types';
+import type { Event, RegistrationFormData } from '../types';
 
 // Mock data for events
 const mockEvents: Event[] = [
@@ -104,7 +104,7 @@ const EventDetail: React.FC = () => {
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [registering, setRegistering] = useState(false);
-  const [registrationData, setRegistrationData] = useState({
+  const [registrationData, setRegistrationData] = useState<RegistrationFormData>({
     name: '',
     email: '',
     phone: '',
@@ -164,11 +164,49 @@ const EventDetail: React.FC = () => {
     e.preventDefault();
     if (!event) return;
 
+    // Validate form data
+    if (!registrationData.name.trim()) {
+      alert('Please enter your full name.');
+      return;
+    }
+    if (!registrationData.email.trim()) {
+      alert('Please enter your email address.');
+      return;
+    }
+    if (!registrationData.phone.trim()) {
+      alert('Please enter your phone number.');
+      return;
+    }
+
+    // Check capacity before submitting
+    if (event.maxAttendees && 
+        event.currentAttendees + registrationData.attendeeCount > event.maxAttendees) {
+      alert(`Sorry, only ${event.maxAttendees - event.currentAttendees} spots remaining. Please reduce the number of attendees.`);
+      return;
+    }
+
     setRegistering(true);
     try {
-      const success = await strapiApi.registerForEvent(event.id, registrationData);
-      if (success) {
-        alert('Registration successful! You will receive a confirmation email shortly.');
+      console.log('Submitting registration:', {
+        eventId: event.id,
+        eventTitle: event.title,
+        registrationData
+      });
+
+      const registration = await strapiApi.registerForEvent(event.id, registrationData);
+      
+      if (registration) {
+        // Show success message with more details
+        const message = `🎉 Registration Successful!\n\n` +
+          `Event: ${event.title}\n` +
+          `Confirmation ID: ${registration.id}\n` +
+          `Attendees: ${registrationData.attendeeCount}\n` +
+          `Contact: ${registrationData.email}\n\n` +
+          `You will receive a confirmation email shortly with event details.`;
+        
+        alert(message);
+        
+        // Reset form
         setRegistrationData({
           name: '',
           email: '',
@@ -176,12 +214,34 @@ const EventDetail: React.FC = () => {
           additionalInfo: '',
           attendeeCount: 1
         });
+
+        // Update local event state with new attendee count
+        setEvent(prev => prev ? {
+          ...prev,
+          currentAttendees: prev.currentAttendees + registrationData.attendeeCount
+        } : null);
+        
+        console.log('Registration completed successfully:', registration);
       } else {
         alert('Registration failed. Please try again or contact us directly.');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Registration error:', error);
-      alert('Registration failed. Please try again or contact us directly.');
+      let errorMessage = 'Registration failed. Please try again or contact us directly.';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('Event not found')) {
+          errorMessage = 'This event is no longer available for registration.';
+        } else if (error.message.includes('fully booked')) {
+          errorMessage = 'Sorry, this event is now fully booked.';
+        } else if (error.message.includes('network') || error.message.includes('fetch')) {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      alert(`❌ Registration Failed\n\n${errorMessage}\n\nIf the problem persists, please contact us at events@stritaparish.org or call (555) 123-4567.`);
     } finally {
       setRegistering(false);
     }
@@ -438,6 +498,7 @@ const EventDetail: React.FC = () => {
                       value={registrationData.name}
                       onChange={(e) => setRegistrationData(prev => ({ ...prev, name: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Enter your full name"
                     />
                   </div>
 
@@ -452,19 +513,22 @@ const EventDetail: React.FC = () => {
                       value={registrationData.email}
                       onChange={(e) => setRegistrationData(prev => ({ ...prev, email: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="your.email@example.com"
                     />
                   </div>
 
                   <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone Number
+                      Phone Number *
                     </label>
                     <input
                       type="tel"
                       id="phone"
+                      required
                       value={registrationData.phone}
                       onChange={(e) => setRegistrationData(prev => ({ ...prev, phone: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="(555) 123-4567"
                     />
                   </div>
 
@@ -478,9 +542,18 @@ const EventDetail: React.FC = () => {
                       onChange={(e) => setRegistrationData(prev => ({ ...prev, attendeeCount: parseInt(e.target.value) }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
-                      {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
-                        <option key={num} value={num}>{num}</option>
-                      ))}
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map(num => {
+                        // Check if this selection would exceed capacity
+                        const wouldExceedCapacity = Boolean(event.maxAttendees && 
+                          event.currentAttendees + num > event.maxAttendees);
+                        
+                        return (
+                          <option key={num} value={num} disabled={wouldExceedCapacity}>
+                            {num} {num === 1 ? 'person' : 'people'}
+                            {wouldExceedCapacity ? ' (would exceed capacity)' : ''}
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
 
@@ -493,17 +566,38 @@ const EventDetail: React.FC = () => {
                       rows={3}
                       value={registrationData.additionalInfo}
                       onChange={(e) => setRegistrationData(prev => ({ ...prev, additionalInfo: e.target.value }))}
-                      placeholder="Any special requirements or notes..."
+                      placeholder="Any special requirements, dietary restrictions, accessibility needs, etc."
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
 
+                  {/* Show capacity warning if getting close to full */}
+                  {event.maxAttendees && 
+                   event.currentAttendees + registrationData.attendeeCount > (event.maxAttendees - 5) && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                      <p className="text-sm text-yellow-800">
+                        ⚠️ Only {event.maxAttendees - event.currentAttendees} spots remaining!
+                      </p>
+                    </div>
+                  )}
+
                   <button
                     type="submit"
-                    disabled={registering}
-                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
+                    disabled={registering || Boolean(event.maxAttendees && 
+                      event.currentAttendees + registrationData.attendeeCount > event.maxAttendees)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 disabled:cursor-not-allowed"
                   >
-                    {registering ? 'Registering...' : 'Register Now'}
+                    {registering ? (
+                      <span className="flex items-center justify-center">
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Processing Registration...
+                      </span>
+                    ) : (
+                      `Register ${registrationData.attendeeCount > 1 ? `${registrationData.attendeeCount} People` : 'Now'}`
+                    )}
                   </button>
                 </form>
               </div>

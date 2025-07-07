@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { strapiApi } from '../../services/api';
+import type { ParishInfo } from '../../types';
 
 const ParishHistorySection: React.FC = () => {
+  const [parishInfo, setParishInfo] = useState<ParishInfo | null>(null);
+
+  useEffect(() => {
+    const fetchParishInfo = async () => {
+      const info = await strapiApi.getParishInfo();
+      setParishInfo(info);
+    };
+    fetchParishInfo();
+  }, []);
+
   return (
     <section className="py-20 bg-gradient-to-b from-white to-amber-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            St. Rita's Parish History
+            {parishInfo?.parishName || 'St. Rita\'s Parish'} History
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-amber-500 to-red-500 mx-auto mb-8"></div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
