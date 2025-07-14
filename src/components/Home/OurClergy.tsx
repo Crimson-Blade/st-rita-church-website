@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Phone, Cross, Heart } from '../Icons';
+import { Mail, Cross, Heart } from '../Icons';
 import { strapiApi } from '../../services/api';
-import type { Priest, ParishInfo } from '../../types';
+import type { Priest } from '../../types';
 
 const OurClergy: React.FC = () => {
   const [clergy, setClergy] = useState<Priest[]>([]);
-  const [parishInfo, setParishInfo] = useState<ParishInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,41 +19,19 @@ const OurClergy: React.FC = () => {
       }
     };
 
-    const fetchParishInfo = async () => {
-      const info = await strapiApi.getParishInfo();
-      setParishInfo(info);
-    };
-
     fetchClergy();
-    fetchParishInfo();
   }, []);
 
   // Mock data if no clergy from API
   const mockClergy: Priest[] = [
     {
       id: 1,
-      name: 'Fr. David Martinez',
-      title: 'Pastor',
-      bio: 'Fr. Martinez has served as our pastor since 2018, bringing 15 years of pastoral experience and a heart for community outreach.',
-      photo: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=400',
-      email: 'pastor@stritaparish.org'
+      name: 'Fr. Domnic Savio',
+      title: 'Priest',
+      bio: 'Served as our parish priest since XXXX, bringing XX years of pastoral experience and a heart for community outreach.',
+      photo: '/Fr_Domnic_Savio_Face.jpg',
+      email: ''
     },
-    {
-      id: 2,
-      name: 'Fr. James Wilson',
-      title: 'Associate Pastor',
-      bio: 'Fr. Wilson joined our parish in 2020 and oversees our youth ministry and religious education programs.',
-      photo: 'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=400',
-      email: 'associate@stritaparish.org'
-    },
-    {
-      id: 3,
-      name: 'Deacon Robert Chen',
-      title: 'Permanent Deacon',
-      bio: 'Deacon Chen assists with liturgical celebrations and coordinates our social justice and outreach ministries.',
-      photo: 'https://images.pexels.com/photos/208315/pexels-photo-208315.jpeg?auto=compress&cs=tinysrgb&w=400',
-      email: 'deacon@stritaparish.org'
-    }
   ];
 
   const displayClergy = clergy.length > 0 ? clergy : mockClergy;
@@ -86,7 +63,7 @@ const OurClergy: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+          <div className={`${displayClergy.length === 1 ? 'flex justify-center' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} gap-12`}>
             {displayClergy.map((member) => (
               <div 
                 key={member.id} 
@@ -131,20 +108,13 @@ const OurClergy: React.FC = () => {
               Our clergy are here to support you in your spiritual journey. Whether you need counseling, 
               spiritual direction, or simply want to talk, our doors are always open.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex justify-center">
               <a
-                href={`mailto:${parishInfo?.parishPriestEmail || 'st.rita.maina1960@gmail.com'}`}
-                className="bg-yellow-500 hover:bg-yellow-600 text-blue-900 px-6 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center"
+                href="/contact"
+                className="bg-yellow-500 hover:bg-yellow-600 text-blue-900 px-8 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center"
               >
                 <Mail className="h-5 w-5 mr-2" />
-                Email Pastor
-              </a>
-              <a
-                href={`tel:${parishInfo?.officePhone || '08326638644'}`}
-                className="border-2 border-white hover:bg-white hover:text-blue-700 px-6 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center"
-              >
-                <Phone className="h-5 w-5 mr-2" />
-                Call Parish Office
+                Contact Us
               </a>
             </div>
           </div>

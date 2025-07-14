@@ -8,7 +8,7 @@ import BlogPost from './pages/BlogPost';
 import Ministries from './pages/Ministries';
 import NoticeBoard from './pages/NoticeBoard';
 import MassTimes from './pages/MassTimes';
-import Events from './pages/Events';
+// import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
 // import RegistrationDemo from './pages/RegistrationDemo';
 // import AdminRegistrations from './pages/AdminRegistrations';
@@ -27,7 +27,7 @@ function App() {
           <Route path="/ministries" element={<Ministries />} />
           <Route path="/notice-board" element={<NoticeBoard />} />
           <Route path="/mass-timings" element={<MassTimes />} />
-          <Route path="/events" element={<Events />} />
+          <Route path="/events" element={<div className="p-8 text-center">Events - Coming Soon</div>} />
           <Route path="/events/:slug" element={<EventDetail />} />
           {/* <Route path="/registration-demo" element={<RegistrationDemo />} /> */}
           {/* <Route path="/admin/registrations" element={<AdminRegistrations />} /> */}

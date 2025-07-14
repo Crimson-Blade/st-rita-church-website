@@ -27,14 +27,14 @@ const QuickActions: React.FC = () => {
     },
     {
       icon: Heart,
-      title: 'Donate',
+      title: 'Donate (Coming Soon)',
       description: 'Support our parish community',
       link: '/donate',
       color: 'bg-red-500 hover:bg-red-600'
     },
     {
       icon: BookOpen,
-      title: 'Faith Formation',
+      title: 'Faith Formation (Coming Soon)',
       description: 'Religious education resources',
       link: '/faith-formation',
       color: 'bg-green-500 hover:bg-green-600'

@@ -99,13 +99,13 @@ const Footer: React.FC = () => {
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <div className="space-y-2">
               <Link
-                to="/bulletins"
+                to="/notice-board"
                 className="block text-sm text-blue-200 hover:text-white transition-colors"
               >
                 Weekly Bulletins
               </Link>
               <Link
-                to="/confession"
+                to="/mass-timings"
                 className="block text-sm text-blue-200 hover:text-white transition-colors"
               >
                 Confession Times
@@ -123,7 +123,7 @@ const Footer: React.FC = () => {
                 Marriage Preparation
               </Link>
               <Link
-                to="/feedback"
+                to="/contact"
                 className="block text-sm text-blue-200 hover:text-white transition-colors"
               >
                 Parish Feedback

@@ -31,9 +31,9 @@ const Header: React.FC = () => {
       ]
     },
     {
-      label: 'News & Events',
+      label: 'News',
       dropdown: [
-        { path: '/events', label: 'Events' },
+        // { path: '/events', label: 'Events' },
         { path: '/blog', label: 'Blog' },
         { path: '/notice-board', label: 'Notice Board' },
       ]
