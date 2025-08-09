@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Calendar, Clock, MapPin, Users, ArrowLeft, Mail, Phone } from '../components/Icons';
 import { strapiApi } from '../services/api';
 import type { Event, RegistrationFormData } from '../types';
+import SEO from '../components/SEO';
 
 // Mock data for events
 const mockEvents: Event[] = [
@@ -331,8 +332,54 @@ const EventDetail: React.FC = () => {
   const canRegister = event.registrationRequired && isUpcoming(event.date);
   const isFullyBooked = event.maxAttendees && event.currentAttendees >= event.maxAttendees;
 
+  const canonicalUrl = `https://saintritamaina.org/events/${event.slug}`;
+  const eventJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: event.title,
+    description: event.description,
+    startDate: `${event.date}T${event.time}`,
+    eventStatus: isPastEvent ? 'https://schema.org/EventCompleted' : 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    location: {
+      '@type': 'Place',
+      name: 'St. Rita\'s Church',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: "St Rita's Church Maina",
+        addressLocality: 'Curtorim',
+        addressRegion: 'Goa',
+        postalCode: '403709',
+        addressCountry: 'IN'
+      }
+    },
+    organizer: {
+      '@type': 'Organization',
+      name: "St. Rita's Church",
+      url: 'https://saintritamaina.org'
+    },
+    url: canonicalUrl
+  };
+
+  const breadcrumbsJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://saintritamaina.org/' },
+      { '@type': 'ListItem', position: 2, name: 'Events', item: 'https://saintritamaina.org/events' },
+      { '@type': 'ListItem', position: 3, name: event.title, item: canonicalUrl }
+    ]
+  };
+
   return (
     <div>
+      <SEO
+        title={`${event.title} – St. Rita's Church, Maina (Curtorim)`}
+        description={event.description}
+        type="event"
+        canonical={canonicalUrl}
+        jsonLd={[eventJsonLd, breadcrumbsJsonLd]}
+      />
       {/* Hero Section */}
       <section 
         className="relative bg-gradient-to-r from-blue-900/80 to-blue-700/80 text-white py-12"

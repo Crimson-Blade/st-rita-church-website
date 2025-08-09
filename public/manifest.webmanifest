@@ -1,0 +1,11 @@
+{
+  "name": "St. Rita's Church",
+  "short_name": "St. Rita",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0b5cff",
+  "icons": [
+    { "src": "/main.ico", "sizes": "64x64 32x32 16x16", "type": "image/x-icon" }
+  ]
+}

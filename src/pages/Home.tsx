@@ -5,10 +5,28 @@ import FeaturedBlogs from '../components/Home/FeaturedBlogs';
 // import UpcomingEvents from '../components/Home/UpcomingEvents';
 import OurClergy from '../components/Home/OurClergy';
 import QuickActions from '../components/Home/QuickActions';
+import SEO from '../components/SEO';
 
 const Home: React.FC = () => {
   return (
     <div>
+      <SEO
+        title="St. Rita Parish, Maina – Catholic Church in Curtorim, South Goa"
+        description="Official site of St. Rita's Church, Maina (Curtorim, South Goa). Mass timings, sacraments, parish office info, events, notices, and ministries. All are welcome."
+        keywords={[
+          'saint rita parish',
+          'maina parish',
+          'maina church',
+          'south goa churches',
+          'curtorim church',
+          'curtorim parish',
+          'st rita church maina',
+          'mass times curtorim',
+          'catholic church south goa'
+        ]}
+        canonical="https://saintritamaina.org/"
+        image="https://saintritamaina.org/rita.png"
+      />
       <Hero />
       <FeaturedNotices />
       <FeaturedBlogs />

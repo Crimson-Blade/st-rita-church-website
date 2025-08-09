@@ -5,6 +5,7 @@ import { strapiApi } from '../services/api';
 import { CustomBlocksRenderer } from '../components/BlocksRenderer';
 import { getImageUrl } from '../utils/imageUtils';
 import type { BlogPost } from '../types';
+import SEO from '../components/SEO';
 
 const BlogPostPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -306,6 +307,39 @@ const BlogPostPage: React.FC = () => {
 
   const displayPost = blogPost || mockBlogPost;
 
+  const canonicalUrl = `https://saintritamaina.org/blog/${displayPost.slug}`;
+  const ogImage = getImageUrl(displayPost.featuredImage) || 'https://saintritamaina.org/rita.png';
+
+  const blogPostingJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: displayPost.title,
+    description: displayPost.excerpt,
+    image: ogImage,
+    author: { '@type': 'Person', name: displayPost.author || 'Parish Team' },
+    datePublished: displayPost.publishedAt,
+    dateModified: displayPost.publishedAt,
+    mainEntityOfPage: canonicalUrl,
+    publisher: {
+      '@type': 'Organization',
+      name: "St. Rita's Church",
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://saintritamaina.org/rita.png'
+      }
+    }
+  };
+
+  const breadcrumbsJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://saintritamaina.org/' },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://saintritamaina.org/blog' },
+      { '@type': 'ListItem', position: 3, name: displayPost.title, item: canonicalUrl }
+    ]
+  };
+
   const handleShare = async () => {
     const shareData = {
       title: displayPost.title,
@@ -387,6 +421,14 @@ const BlogPostPage: React.FC = () => {
         backgroundAttachment: 'fixed'
       }}
     >
+      <SEO
+        title={displayPost.title}
+        description={displayPost.excerpt}
+        type="article"
+        canonical={canonicalUrl}
+        image={ogImage}
+        jsonLd={[blogPostingJsonLd, breadcrumbsJsonLd]}
+      />
       {/* <div className="absolute inset-0 bg-white/90"></div> */}
       
       {/* Navigation */}

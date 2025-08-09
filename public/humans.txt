@@ -1,0 +1,7 @@
+/* TEAM */
+Site: St. Rita's Church, Maina – https://saintritamaina.org
+Priest: Fr. Domnic Savio
+Contact: st.rita.maina1960@gmail.com | +91 832 663 8644
+
+/* THANKS */
+Built with Vite + React + TailwindCSS. Hosted on Netlify.

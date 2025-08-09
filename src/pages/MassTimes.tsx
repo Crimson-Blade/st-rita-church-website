@@ -10,6 +10,7 @@ import {
 } from '../components/Icons';
 import { strapiApi } from '../services/api';
 import type { MassTime, AdorationTime, ConfessionTime, ParishInfo } from '../types';
+import SEO from '../components/SEO';
 
 const MassTimes: React.FC = () => {
   const [massTimes, setMassTimes] = useState<MassTime[]>([]);
@@ -85,8 +86,54 @@ const MassTimes: React.FC = () => {
     !['SATURDAY', 'SUNDAY'].includes(day)
   );
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What are the Sunday Mass timings at St. Rita\'s Church, Maina (Curtorim)?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Sunday Masses are at 6:30 AM, 8:15 AM, and 9:30 AM (English). Saturday evening anticipated Mass is at 6:00 PM.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'What time is daily Mass at St. Rita\'s Church, Maina?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Daily Mass (Monday to Friday) is at 6:45 AM.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'When are confessions heard at St. Rita\'s Church, Maina?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Confessions are available daily at 6:30 AM (except Sundays) and by appointment.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'Where is St. Rita\'s Church located?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Address: St Rita\'s Church Maina, Curtorim, Goa 403709.'
+        }
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+      <SEO
+        title="Mass Timings – St. Rita Parish, Maina (Curtorim)"
+        description="Find Sunday and daily Mass times, confession schedules, and adoration at St. Rita's Church, Maina, Curtorim, South Goa."
+        canonical="https://saintritamaina.org/mass-timings"
+        keywords={['mass times curtorim', 'st rita mass timings', 'curtorim church mass', 'confession timings curtorim', 'maina parish mass']}
+        jsonLd={faqJsonLd}
+      />
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
         <div className="container mx-auto px-4">
