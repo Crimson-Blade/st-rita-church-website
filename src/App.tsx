@@ -25,7 +25,8 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/ministries" element={<Ministries />} />
+          {/* TODO */}
+          <Route path="/ministries" element={<div className="p-8 text-center">Ministries - Coming Soon</div>} />
           <Route path="/notice-board" element={<NoticeBoard />} />
           <Route path="/mass-timings" element={<MassTimes />} />
           <Route path="/events" element={<div className="p-8 text-center">Events - Coming Soon</div>} />

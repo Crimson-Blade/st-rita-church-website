@@ -35,7 +35,7 @@ const About: React.FC = () => {
       <HeroSection scrollY={scrollY} />
       <LifeStorySection isVisible={isVisible} />
       <RosesSection />
-      <ParishHistorySection />
+      {/* TODO <ParishHistorySection /> */}
       <LegacySection />
       <IntercessionSection />
       <VisitParishSection />
