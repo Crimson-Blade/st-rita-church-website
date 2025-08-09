@@ -3,7 +3,7 @@ import {
   HeroSection,
   LifeStorySection,
   RosesSection,
-  ParishHistorySection,
+  // ParishHistorySection,
   LegacySection,
   IntercessionSection,
   VisitParishSection

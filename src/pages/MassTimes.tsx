@@ -65,7 +65,7 @@ const MassTimes: React.FC = () => {
 
   const mockConfessionTimes: ConfessionTime[] = [
     { id: 1, day: 'MON-SAT', startTime: '6:30 AM', endTime: '6:45 AM', location: 'Church' },
-    { id: 2, day: '', startTime: '', endTime: '', location: 'Confession is also available by appointment.', notes: '0000000000', availableByAppointment: true },
+    { id: 2, day: '', startTime: '', endTime: '', location: 'Confession is also available by appointment.', notes: '+91 98239 82767', availableByAppointment: true },
   ];
 
   const displayMassTimes = massTimes.length > 0 ? massTimes : mockMassTimes;

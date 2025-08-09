@@ -5,7 +5,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
-import Ministries from './pages/Ministries';
+// import Ministries from './pages/Ministries';
 import NoticeBoard from './pages/NoticeBoard';
 import MassTimes from './pages/MassTimes';
 import Donate from './pages/Donate';

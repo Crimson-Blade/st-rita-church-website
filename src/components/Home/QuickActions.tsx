@@ -27,7 +27,7 @@ const QuickActions: React.FC = () => {
     },
     {
       icon: Heart,
-      title: 'Donate (Coming Soon)',
+      title: 'Donate',
       description: 'Support our parish community',
       link: '/donate',
       color: 'bg-red-500 hover:bg-red-600'
