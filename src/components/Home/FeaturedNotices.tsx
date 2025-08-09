@@ -4,18 +4,27 @@ import { Bell, Clock, ArrowRight, AlertTriangle, Image as ImageIcon, Eye } from 
 import { strapiApi } from '../../services/api';
 import { getItemImageUrl } from '../../utils/imageUtils';
 import type { NoticeBoardItem } from '../../types';
+import axios from 'axios';
 
 const FeaturedNotices: React.FC = () => {
   const [notices, setNotices] = useState<NoticeBoardItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchNotices = async () => {
       try {
         const response = await strapiApi.getNoticeBoardItems(1, 3);
         setNotices(response.data); // Show only first 3
-      } catch (error) {
-        console.error('Error fetching notices:', error);
+        setError(null);
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          const status = err.response?.status;
+          const noResponse = !err.response;
+          if (status === 502 || noResponse) {
+            setError('Service under maintenence. Come back later');
+          }
+        }
       } finally {
         setLoading(false);
       }
@@ -31,41 +40,6 @@ const FeaturedNotices: React.FC = () => {
       year: 'numeric',
     });
   };
-
-  // Mock data if no notices from API
-  const mockNotices: NoticeBoardItem[] = [
-    {
-      id: 1,
-      type: 'text',
-      title: 'Easter Sunday Services',
-      content: 'Join us for our special Easter Sunday celebration with services at 8:00 AM, 10:30 AM, and 6:00 PM. Special music and decorations will enhance our worship.',
-      publishedAt: '2024-03-20',
-      urgent: true,
-      slug: 'easter-sunday-services'
-    },
-    {
-      id: 2,
-      type: 'poster',
-      title: 'Lenten Prayer Schedule',
-      content: 'Special prayer times and devotions during the holy season of Lent',
-      imageUrl: 'https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg?auto=compress&cs=tinysrgb&w=800',
-      publishedAt: '2024-03-18',
-      urgent: false,
-      slug: 'lenten-prayer-schedule'
-    },
-    {
-      id: 3,
-      type: 'image',
-      title: 'Parish Picnic Photos',
-      content: 'Beautiful moments captured from our recent parish community picnic',
-      imageUrl: 'https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800',
-      publishedAt: '2024-03-15',
-      urgent: false,
-      slug: 'parish-picnic-photos'
-    }
-  ];
-
-  const displayNotices = notices.length > 0 ? notices : mockNotices;
 
   if (loading) {
     return (
@@ -83,6 +57,19 @@ const FeaturedNotices: React.FC = () => {
                 <div className="h-3 bg-gray-300 rounded w-2/3"></div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center py-12">
+            <Bell className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Service under maintenence. Come back later</h3>
           </div>
         </div>
       </section>
@@ -111,7 +98,7 @@ const FeaturedNotices: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {displayNotices.map((notice) => (
+          {notices.map((notice) => (
             <div
               key={notice.id}
               className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-200 hover:scale-105 hover:shadow-xl"

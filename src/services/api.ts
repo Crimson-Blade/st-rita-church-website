@@ -92,17 +92,8 @@ export const strapiApi = {
       };
     } catch (error) {
       console.error('Error fetching notice board items:', error);
-      return {
-        data: [],
-        meta: {
-          pagination: {
-            page: 1,
-            pageSize: pageSize,
-            pageCount: 0,
-            total: 0
-          }
-        }
-      };
+      // Propagate error so UI can show maintenance message
+      throw error;
     }
   },
 
@@ -156,17 +147,8 @@ export const strapiApi = {
       };
     } catch (error) {
       console.error('Error fetching blog posts:', error);
-      return {
-        data: [],
-        meta: {
-          pagination: {
-            page: 1,
-            pageSize: pageSize,
-            pageCount: 0,
-            total: 0
-          }
-        }
-      };
+      // Propagate error so UI can show maintenance message
+      throw error;
     }
   },
 

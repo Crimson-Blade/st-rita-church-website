@@ -22,6 +22,7 @@ import { strapiApi } from '../services/api';
 import { getItemImageUrl } from '../utils/imageUtils';
 import Pagination from '../components/Pagination';
 import type { NoticeBoardItem } from '../types';
+import axios from 'axios';
 
 const NoticeBoard: React.FC = () => {
   const [noticeBoardItems, setNoticeBoardItems] = useState<NoticeBoardItem[]>([]);
@@ -38,6 +39,7 @@ const NoticeBoard: React.FC = () => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [selectedItem, setSelectedItem] = useState<NoticeBoardItem | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   // Debounce search term
   useEffect(() => {
@@ -55,8 +57,15 @@ const NoticeBoard: React.FC = () => {
         const response = await strapiApi.getNoticeBoardItems(pagination.page, pagination.pageSize, debouncedSearchTerm);
         setNoticeBoardItems(response.data);
         setPagination(response.meta.pagination);
-      } catch (error) {
-        console.error('Error fetching notice board data:', error);
+        setError(null);
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          const status = err.response?.status;
+          const noResponse = !err.response;
+          if (status === 502 || noResponse) {
+            setError('Service under maintenence. Come back later');
+          }
+        }
         setNoticeBoardItems([]);
       } finally {
         setLoading(false);
@@ -113,6 +122,124 @@ const NoticeBoard: React.FC = () => {
     setCurrentImageIndex((prev) => (prev - 1 + imageItems.length) % imageItems.length);
     setSelectedItem(imageItems[(currentImageIndex - 1 + imageItems.length) % imageItems.length]);
   };
+
+  if (loading) {
+    return (
+      <div>
+        {/* Hero Section */}
+        <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
+          <div className="container mx-auto px-4">
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-6">
+                <Bell className="h-12 w-12 text-yellow-300 mr-4" />
+                <h1 className="text-4xl lg:text-5xl font-bold">Parish Notice Board</h1>
+              </div>
+              <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+                Stay connected with our parish community through announcements, event photos, and important notices.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Controls */}
+        <section className="py-8 bg-gray-50 border-b">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
+              {/* Search */}
+              <div className="relative w-full lg:w-96">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search notices..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div className="flex items-center space-x-4">
+                {/* Filter */}
+                <div className="flex items-center space-x-2">
+                  <Filter className="h-5 w-5 text-gray-600" />
+                  <select
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value as typeof filterType)}
+                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="all">All Items</option>
+                    <option value="text">Announcements</option>
+                    <option value="image">Photos</option>
+                    <option value="poster">Posters</option>
+                  </select>
+                </div>
+
+                {/* View Mode */}
+                <div className="flex items-center bg-white rounded-lg border border-gray-300 p-1">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`p-2 rounded ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+                  >
+                    <Grid className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`p-2 rounded ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+                  >
+                    <List className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Skeletons */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'} gap-6`}>
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="bg-gray-300 h-64 rounded-lg mb-4"></div>
+                  <div className="h-4 bg-gray-300 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-300 rounded w-2/3"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div>
+        {/* Hero Section */}
+        <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
+          <div className="container mx-auto px-4">
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-6">
+                <Bell className="h-12 w-12 text-yellow-300 mr-4" />
+                <h1 className="text-4xl lg:text-5xl font-bold">Parish Notice Board</h1>
+              </div>
+              <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+                Stay connected with our parish community through announcements, event photos, and important notices.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center py-12">
+              <Bell className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Service under maintenence. Come back later</h3>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -186,17 +313,7 @@ const NoticeBoard: React.FC = () => {
       {/* Notice Board Content */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          {loading ? (
-            <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'} gap-6`}>
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="bg-gray-300 h-64 rounded-lg mb-4"></div>
-                  <div className="h-4 bg-gray-300 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-300 rounded w-2/3"></div>
-                </div>
-              ))}
-            </div>
-          ) : filteredItems.length > 0 ? (
+          {filteredItems.length > 0 ? (
             <div className={`grid ${viewMode === 'grid'
                 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
                 : 'grid-cols-1 max-w-4xl mx-auto'

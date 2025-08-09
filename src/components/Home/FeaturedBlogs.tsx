@@ -4,18 +4,28 @@ import { Calendar, User, ArrowRight, BookOpen } from '../Icons';
 import { strapiApi } from '../../services/api';
 import { getImageUrl } from '../../utils/imageUtils';
 import type { BlogPost } from '../../types';
+import axios from 'axios';
 
 const FeaturedBlogs: React.FC = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchBlogPosts = async () => {
       try {
         const response = await strapiApi.getBlogPosts(1, 3);
         setBlogPosts(response.data); // Show only first 3 for homepage
-      } catch (error) {
-        console.error('Error fetching blog posts:', error);
+        setError(null);
+      } catch (err: unknown) {
+        // Show maintenance message when API doesn't respond or 502
+        if (axios.isAxiosError(err)) {
+          const status = err.response?.status;
+          const noResponse = !err.response; // network / server down
+          if (status === 502 || noResponse) {
+            setError('Service under maintenence. Come back later');
+          }
+        }
       } finally {
         setLoading(false);
       }
@@ -31,132 +41,6 @@ const FeaturedBlogs: React.FC = () => {
       year: 'numeric',
     });
   };
-
-  // Mock data if no blog posts from API
-  const mockBlogPosts: BlogPost[] = [
-    {
-      id: 1,
-      title: 'Preparing Our Hearts for Lent',
-      content: [
-        {
-          type: 'paragraph',
-          children: [
-            {
-              type: 'text',
-              text: 'As we approach the season of Lent, it is important to prepare our hearts and minds for this sacred time of reflection, prayer, and penance...'
-            }
-          ]
-        }
-      ],
-      excerpt: 'Discover meaningful ways to observe Lent and grow closer to God through prayer, fasting, and almsgiving.',
-      publishedAt: '2024-02-28',
-      author: 'Fr. David Martinez',
-      slug: 'preparing-hearts-for-lent',
-      featuredImage: {
-        id: 1,
-        documentId: 'mock-featured-1',
-        name: 'lent-preparation.jpg',
-        alternativeText: 'Preparing for Lent',
-        caption: null,
-        width: 800,
-        height: 600,
-        formats: {},
-        hash: 'mock_hash_featured_1',
-        ext: '.jpg',
-        mime: 'image/jpeg',
-        size: 100000,
-        url: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800',
-        previewUrl: null,
-        provider: 'cloudinary',
-        provider_metadata: null,
-        createdAt: '2024-02-28T00:00:00.000Z',
-        updatedAt: '2024-02-28T00:00:00.000Z',
-        publishedAt: '2024-02-28T00:00:00.000Z'
-      }
-    },
-    {
-      id: 2,
-      title: 'The Power of Community Prayer',
-      content: [
-        {
-          type: 'paragraph',
-          children: [
-            {
-              type: 'text',
-              text: 'When we gather together in prayer, something beautiful happens. The collective voices of our parish family create a powerful bond...'
-            }
-          ]
-        }
-      ],
-      excerpt: 'Explore how praying together as a community strengthens our faith and deepens our relationship with God.',
-      publishedAt: '2024-02-20',
-      author: 'Fr. James Wilson',
-      slug: 'power-of-community-prayer',
-      featuredImage: {
-        id: 2,
-        documentId: 'mock-featured-2',
-        name: 'community-prayer.jpg',
-        alternativeText: 'Community Prayer',
-        caption: null,
-        width: 800,
-        height: 600,
-        formats: {},
-        hash: 'mock_hash_featured_2',
-        ext: '.jpg',
-        mime: 'image/jpeg',
-        size: 100000,
-        url: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800',
-        previewUrl: null,
-        provider: 'cloudinary',
-        provider_metadata: null,
-        createdAt: '2024-02-20T00:00:00.000Z',
-        updatedAt: '2024-02-20T00:00:00.000Z',
-        publishedAt: '2024-02-20T00:00:00.000Z'
-      }
-    },
-    {
-      id: 3,
-      title: 'Living the Beatitudes Today',
-      content: [
-        {
-          type: 'paragraph',
-          children: [
-            {
-              type: 'text',
-              text: 'The Beatitudes offer us a roadmap for Christian living in the modern world. Each blessing shows us how to find true happiness...'
-            }
-          ]
-        }
-      ],
-      excerpt: 'Learn how to apply Jesus\' teachings from the Beatitudes to our daily lives and find true spiritual fulfillment.',
-      publishedAt: '2024-02-15',
-      author: 'Deacon Robert Chen',
-      slug: 'living-beatitudes-today',
-      featuredImage: {
-        id: 3,
-        documentId: 'mock-featured-3',
-        name: 'beatitudes.jpg',
-        alternativeText: 'Living the Beatitudes',
-        caption: null,
-        width: 800,
-        height: 600,
-        formats: {},
-        hash: 'mock_hash_featured_3',
-        ext: '.jpg',
-        mime: 'image/jpeg',
-        size: 100000,
-        url: 'https://images.pexels.com/photos/8468/candle-light-prayer-church.jpg?auto=compress&cs=tinysrgb&w=800',
-        previewUrl: null,
-        provider: 'cloudinary',
-        provider_metadata: null,
-        createdAt: '2024-02-15T00:00:00.000Z',
-        updatedAt: '2024-02-15T00:00:00.000Z',
-        publishedAt: '2024-02-15T00:00:00.000Z'
-      }
-    }
-  ];
-
-  const displayBlogPosts = blogPosts.length > 0 ? blogPosts : mockBlogPosts;
 
   if (loading) {
     return (
@@ -174,6 +58,19 @@ const FeaturedBlogs: React.FC = () => {
                 <div className="h-3 bg-gray-300 rounded w-2/3"></div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center py-12">
+            <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Service under maintenence. Come back later</h3>
           </div>
         </div>
       </section>
@@ -203,7 +100,7 @@ const FeaturedBlogs: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {displayBlogPosts.map((post) => (
+          {blogPosts.map((post) => (
             <article
               key={post.id}
               className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-200 hover:scale-105 hover:shadow-xl"
