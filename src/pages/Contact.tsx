@@ -103,6 +103,30 @@ const Contact: React.FC = () => {
         </div>
       </section>
 
+      {/* WhatsApp Contact Section */}
+      <section className="py-8 bg-green-50 border-b border-green-100">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+            <div className="text-center sm:text-left">
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">Need immediate assistance?</h3>
+              <p className="text-gray-600">Contact us directly on WhatsApp</p>
+            </div>
+            <a
+              href="https://wa.me/9604785669"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 2.079.539 4.03 1.474 5.743L0 24l6.439-1.688c1.652.854 3.512 1.305 5.578 1.305 6.621 0 11.987-5.367 11.987-11.987C23.973 5.367 18.607.029 12.017.029zM12.017 21.973c-1.816 0-3.532-.395-5.007-1.102L6.6 20.7l-4.063 1.065 1.087-3.975-.182-.323c-.787-1.398-1.204-2.999-1.204-4.67 0-5.498 4.475-9.973 9.973-9.973s9.973 4.475 9.973 9.973-4.475 9.973-9.973 9.973z"/>
+                <path d="M8.534 7.515c-.242 0-.487.094-.651.243-.164.15-.651.635-.651 1.548s.667 1.794.759 1.919c.093.125 1.304 1.991 3.158 2.794.441.191.785.305 1.053.391.442.141.845.121 1.163.073.386-.057 1.199-.49 1.369-.963.169-.473.169-.878.118-.963-.05-.085-.186-.135-.386-.236-.2-.101-1.183-.583-1.367-.65-.184-.066-.318-.099-.452.099-.135.199-.518.65-.635.783-.118.133-.236.15-.436.05-.2-.101-.845-.312-1.608-.993-.594-.531-.996-1.186-1.113-1.386-.118-.2-.013-.308.088-.408.09-.09.2-.236.301-.354.1-.118.133-.2.2-.334.066-.133.033-.25-.017-.35-.05-.101-.452-1.088-.619-1.489-.163-.39-.329-.337-.452-.343-.118-.006-.252-.007-.386-.007z"/>
+              </svg>
+              <span>WhatsApp Us</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Contact Information */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">

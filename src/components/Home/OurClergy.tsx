@@ -28,7 +28,7 @@ const OurClergy: React.FC = () => {
       id: 1,
       name: 'Fr. Domnic Savio',
       title: 'Priest',
-      bio: 'Served as our parish priest since XXXX, bringing XX years of pastoral experience and a heart for community outreach.',
+      bio: 'Serving as our parish priest since 2023, bringing over 30 years of pastoral experience and a heart for community outreach.',
       photo: '/Fr_Domnic_Savio_Face.jpg',
       email: ''
     },
