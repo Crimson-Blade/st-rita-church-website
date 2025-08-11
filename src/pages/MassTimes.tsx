@@ -355,7 +355,7 @@ const MassTimes: React.FC = () => {
                   <li>• Holy Day schedules may vary</li>
                   <li>• Christmas and Easter have special times</li>
                   <li>• Check bulletin for holiday changes</li>
-                  <li>• First Friday devotions after evening Mass</li>
+                  <li>• Every Friday devotion before the mass at 6.15 am</li>
                 </ul>
               </div>
 
