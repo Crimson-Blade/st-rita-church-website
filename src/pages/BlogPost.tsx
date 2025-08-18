@@ -428,6 +428,9 @@ const BlogPostPage: React.FC = () => {
         canonical={canonicalUrl}
         image={ogImage}
         jsonLd={[blogPostingJsonLd, breadcrumbsJsonLd]}
+        author={displayPost.author || 'Parish Team'}
+        publishedTime={displayPost.publishedAt}
+        modifiedTime={displayPost.publishedAt}
       />
       {/* <div className="absolute inset-0 bg-white/90"></div> */}
       
