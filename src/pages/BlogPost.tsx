@@ -336,7 +336,7 @@ const BlogPostPage: React.FC = () => {
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://saintritamaina.org/' },
       { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://saintritamaina.org/blog' },
-      { '@type': 'ListItem', position: 3, name: displayPost.title, item: canonicalUrl }
+      { '@type': 'ListItem', position: 3, name: `${displayPost.title} - ${displayPost.author || 'Parish Team'}`, item: canonicalUrl }
     ]
   };
 
