@@ -11,7 +11,8 @@ const Home: React.FC = () => {
   return (
     <div>
       <SEO
-        title="St. Rita Parish, Maina – Catholic Church in Curtorim, South Goa"
+        // Provide only the page-specific part; component will append site name
+        title="Home"
         description="Official site of St. Rita's Church, Maina (Curtorim, South Goa). Mass timings, sacraments, parish office info, events, notices, and ministries. All are welcome."
         keywords={[
           'saint rita parish',

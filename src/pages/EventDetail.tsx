@@ -374,7 +374,7 @@ const EventDetail: React.FC = () => {
   return (
     <div>
       <SEO
-        title={`${event.title} – St. Rita's Church, Maina (Curtorim)`}
+        title={event.title}
         description={event.description}
         type="event"
         canonical={canonicalUrl}

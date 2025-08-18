@@ -433,7 +433,6 @@ const BlogPostPage: React.FC = () => {
         modifiedTime={displayPost.publishedAt}
       />
       {/* <div className="absolute inset-0 bg-white/90"></div> */}
-      
       {/* Navigation */}
       <div className="bg-white/95 backdrop-blur-sm shadow-sm relative z-10">
         <div className="container mx-auto px-4 py-4">

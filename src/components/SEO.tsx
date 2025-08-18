@@ -16,9 +16,10 @@ interface SEOProps {
   modifiedTime?: string; // ISO
 }
 
+// Component only export (avoids fast refresh complaints)
 const SEO: React.FC<SEOProps> = ({
   title,
-  description = "St. Rita's Church, Maina – Catholic Church in Curtorim, South Goa. Mass timings, sacraments, events, and parish life.",
+  description = "St. Rita's Church, Maina Parish – Catholic Church in Curtorim, South Goa. Mass timings, sacraments, events, and parish life.",
   canonical,
   image = '/rita.png',
   type = 'website',
@@ -30,9 +31,9 @@ const SEO: React.FC<SEOProps> = ({
   publishedTime,
   modifiedTime,
 }) => {
-  const siteName = "St. Rita's Church"; // moved inside to satisfy fast refresh rule
+  const siteName = "St. Rita's Church, Maina Parish"; // provided official name
   const siteUrl = 'https://saintritamaina.org';
-  const fullTitle = title ? `${title} | ${siteName}` : `${siteName} – Catholic Church in Curtorim, South Goa`;
+  const fullTitle = title ? `${title} | ${siteName}` : `${siteName} – Catholic Church in Maina, Curtorim, South Goa`;
   const url = canonical || (typeof window !== 'undefined' ? window.location.href : siteUrl);
   const metaKeywords = keywords?.join(', ');
 

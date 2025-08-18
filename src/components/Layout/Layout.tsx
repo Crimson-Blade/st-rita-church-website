@@ -8,38 +8,31 @@ import { useLocation } from 'react-router-dom';
 
 interface LayoutProps {
   children: React.ReactNode;
+  /**
+   * @deprecated Per-page titles & descriptions should be set via the <SEO /> component, not Layout.
+   */
   title?: string;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, title }) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [parishInfo, setParishInfo] = useState<ParishInfo | null>(null);
   const location = useLocation();
 
+  // Fetch parish info once (used for structured data / header / footer)
   useEffect(() => {
     const fetchParishInfo = async () => {
-      const info = await strapiApi.getParishInfo();
-      setParishInfo(info);
+      try {
+        const info = await strapiApi.getParishInfo();
+        setParishInfo(info);
+      } catch (e) {
+        // Silently fail – SEO component provides fallbacks
+        console.warn('Failed to load parish info', e);
+      }
     };
     fetchParishInfo();
   }, []);
 
-  useEffect(() => {
-    if (parishInfo) {
-      const parishName = parishInfo.parishName || 'St. Rita\'s Parish';
-      const parishSubtitle = parishInfo.parishSubtitle || 'Catholic Church';
-      const pageTitle = title ? `${title} - ${parishName}` : `${parishName} - ${parishSubtitle}`;
-      document.title = pageTitle;
-      
-      // Update meta description
-      const metaDescription = document.querySelector('meta[name="description"]');
-      if (metaDescription) {
-        metaDescription.setAttribute('content', 
-          `${parishName} - A welcoming Catholic community dedicated to faith, fellowship, and service.`
-        );
-      }
-    }
-  }, [parishInfo, title]);
-
+  // Church schema (site-wide)
   const churchJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Church',
@@ -88,7 +81,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
     ],
   };
 
-  // Breadcrumbs for top-level static routes
+  // Simple breadcrumb only for top-level static routes (page-specific SEO still handled in pages via <SEO />)
   const path = location.pathname;
   const segment = path.split('/').filter(Boolean);
   const labelMap: Record<string, string> = {
@@ -123,9 +116,9 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
+        {/* Global-only tags (page-level SEO handled by <SEO /> component). */}
         <meta name="theme-color" content="#0b5cff" />
-        <meta property="og:site_name" content={parishInfo?.parishName || "St. Rita's Church"} />
-        <link rel="canonical" href={typeof window !== 'undefined' ? window.location.href : 'https://saintritamaina.org'} />
+        {/* Structured data */}
         <script type="application/ld+json">{JSON.stringify(churchJsonLd)}</script>
         {breadcrumbsJsonLd && (
           <script type="application/ld+json">{JSON.stringify(breadcrumbsJsonLd)}</script>

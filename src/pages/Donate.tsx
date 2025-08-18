@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import QRCode from 'qrcode';
+import SEO from '../components/SEO';
 
 const Donate: React.FC = () => {
   const qrRef1 = useRef<HTMLCanvasElement>(null);
@@ -62,6 +63,11 @@ const Donate: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
+      <SEO
+        title="Donate"
+        description="Support our parish mission and ministries through your generous donation."
+        canonical="https://saintritamaina.org/donate"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">

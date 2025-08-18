@@ -6,6 +6,7 @@ import { getImageUrl } from '../utils/imageUtils';
 import Pagination from '../components/Pagination';
 import type { BlogPost } from '../types';
 import axios from 'axios';
+import SEO from '../components/SEO';
 
 const Blog: React.FC = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -182,6 +183,11 @@ const Blog: React.FC = () => {
 
   return (
     <div>
+      <SEO
+        title="Blog"
+        description="Reflections, parish news, and spiritual resources from our parish community."
+        canonical="https://saintritamaina.org/blog"
+      />
       {/* Hero Section */}
       <section 
         className="relative bg-gradient-to-r from-blue-900/80 to-blue-700/80 text-white py-16"

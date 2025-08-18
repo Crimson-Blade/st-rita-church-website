@@ -128,8 +128,8 @@ const MassTimes: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       <SEO
-        title="Mass Timings – St. Rita Parish, Maina (Curtorim)"
-        description="Find Sunday and daily Mass times, confession schedules, and adoration at St. Rita's Church, Maina, Curtorim, South Goa."
+        title="Mass Timings"
+        description="Sunday and daily Mass, confession schedule, and adoration times for our parish in Maina, Curtorim, South Goa."
         canonical="https://saintritamaina.org/mass-timings"
         keywords={['mass times curtorim', 'st rita mass timings', 'curtorim church mass', 'confession timings curtorim', 'maina parish mass']}
         jsonLd={faqJsonLd}

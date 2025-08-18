@@ -23,6 +23,7 @@ import { getItemImageUrl } from '../utils/imageUtils';
 import Pagination from '../components/Pagination';
 import type { NoticeBoardItem } from '../types';
 import axios from 'axios';
+import SEO from '../components/SEO';
 
 const NoticeBoard: React.FC = () => {
   const [noticeBoardItems, setNoticeBoardItems] = useState<NoticeBoardItem[]>([]);
@@ -243,6 +244,11 @@ const NoticeBoard: React.FC = () => {
 
   return (
     <div>
+      <SEO
+        title="Notice Board"
+        description="Announcements, photos, and updates from our parish community."
+        canonical="https://saintritamaina.org/notice-board"
+      />
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
         <div className="container mx-auto px-4">
