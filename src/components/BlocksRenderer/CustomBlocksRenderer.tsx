@@ -96,7 +96,7 @@ const CustomBlocksRenderer: React.FC<CustomBlocksRendererProps> = ({ content }) 
             return (
               <Link 
                 to={url} 
-                className="text-blue-600 hover:text-blue-800 underline transition-colors duration-200"
+                className="text-blue-600 hover:text-blue-800 underline transition-colors duration-200 break-words hyphens-auto"
               >
                 {children}
               </Link>
@@ -108,7 +108,7 @@ const CustomBlocksRenderer: React.FC<CustomBlocksRendererProps> = ({ content }) 
               href={url} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline transition-colors duration-200"
+              className="text-blue-600 hover:text-blue-800 underline transition-colors duration-200 break-words hyphens-auto"
             >
               {children}
             </a>
