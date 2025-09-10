@@ -109,7 +109,7 @@ const Contact: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
             <div className="text-center sm:text-left">
               <h3 className="text-lg font-semibold text-gray-900 mb-1">Need immediate assistance?</h3>
-              <p className="text-gray-600">Contact Fr. Savio directly on WhatsApp</p>
+              <p className="text-gray-600">Contact Fr. Domnic Savio Vaz directly on WhatsApp</p>
             </div>
             <a
               href="https://wa.me/+919823982767"

@@ -26,7 +26,7 @@ const OurClergy: React.FC = () => {
   const mockClergy: Priest[] = [
     {
       id: 1,
-      name: 'Fr. Domnic Savio',
+      name: 'Fr. Domnic Savio Vaz',
       title: 'Priest',
       bio: 'Serving as our parish priest since 2023, bringing over 30 years of pastoral experience and a heart for community outreach.',
       photo: '/Fr_Domnic_Savio_Face.jpg',
